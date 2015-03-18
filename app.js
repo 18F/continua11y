@@ -48,12 +48,15 @@ app.post("/check", bodyParser.json(), function (req, res){
                 res.on("data", function (d){
                     d = yaml.safeLoad(d);
                     in_urls = d.urls;
-                    checker(in_urls);
+                    checker(in_urls, d);
                 });
             } else {
                 if (req.body.repository.homepage !== null) {
+                    console.log("no pa11y.yaml found; using repo homepage")
                     in_urls.push(req.body.repository.homepage);
-                    checker(in_urls);
+                    checker(in_urls, null);
+                } else {
+                    console.log("no sites to check!")
                 }
             }
         });

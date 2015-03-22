@@ -27,12 +27,13 @@ var enableCORS = function(req, res, next) {
 app.use(enableCORS);
 
 var conString = process.env.DATABASE_URL || "postgres://localhost/postgres";
-var client = pg.connect(conString, function (err, client){
+var client = pg.connect(conString, function (err, client, done){
     if (err) {
         console.log(err);
     } else {
         client.query("CREATE TABLE IF NOT EXISTS results(repo text, url text, total int, errors int, warnings int, notices int);");
     }
+    done();
 });
 
 app.get("/", function (req, res){
@@ -40,12 +41,11 @@ app.get("/", function (req, res){
 });
 
 app.get("/:account/:repo.svg", function (req, res){
-    var r = req.params.account + "/" + req.params.repo;
-    var client = pg.connect(conString, function (err, client){
+    var client = pg.connect(conString, function (err, client, done){
         if (err) {
             console.log(err);
         } else {
-            client.query("SELECT * FROM results WHERE repo = '"+r+"'", function (err, result){
+            client.query("SELECT * FROM results WHERE repo = '"+req.params.account + "/" + req.params.repo+"'", function (err, result){
                 var summary;
                 var color;
                 if (result.rows.length === 0){
@@ -71,6 +71,7 @@ app.get("/:account/:repo.svg", function (req, res){
                             res.send(svg);
                     });
                 }
+                done()
             });
         }
     });
@@ -78,23 +79,19 @@ app.get("/:account/:repo.svg", function (req, res){
 
 app.get("/:account/:repo", function (req, res){
     // TODO: view completed and in-progress jobs
-    console.log("got "+req.params)
-    var r = req.params.account + "/" + req.params.repo;
-    var client = pg.connect(conString, function (err, client){
-        console.log("checking the database");
+    var client = pg.connect(conString, function (err, client, done){
         if (err) {
             console.log(err);
         } else {
-            client.query("SELECT * FROM results WHERE repo = '"+r+"'", function (err, result){
-                console.log("finding results");
+            client.query("SELECT * FROM results WHERE repo = '"+req.params.account + "/" + req.params.repo+"'", function (err, result){
                 if (result.rows.length === 0){
                     // TODO: Setup instructions if new
 
                     res.send("I don't know that repo");
                 } else {
-                    ("rendering");
-                    res.render('report', {results: result.rows, repo: r, thisUrl: req.protocol + '://' + req.get('host') + req.originalUrl});
+                    res.render('report', {results: result.rows, repo: req.params.account + "/" + req.params.repo, thisUrl: req.protocol + '://' + req.get('host') + req.originalUrl});
                 }
+                done();
             });
         }
     });

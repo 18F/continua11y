@@ -78,17 +78,21 @@ app.get("/:account/:repo.svg", function (req, res){
 
 app.get("/:account/:repo", function (req, res){
     // TODO: view completed and in-progress jobs
+    console.log("got "+req.params)
     var r = req.params.account + "/" + req.params.repo;
     var client = pg.connect(conString, function (err, client){
+        console.log("checking the database");
         if (err) {
             console.log(err);
         } else {
             client.query("SELECT * FROM results WHERE repo = '"+r+"'", function (err, result){
+                console.log("finding results");
                 if (result.rows.length === 0){
                     // TODO: Setup instructions if new
 
                     res.send("I don't know that repo");
                 } else {
+                    ("rendering");
                     res.render('report', {results: result.rows, repo: r, thisUrl: req.protocol + '://' + req.get('host') + req.originalUrl});
                 }
             });

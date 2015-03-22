@@ -14,6 +14,7 @@
     "gh-badges": "^1.1.0",
     "jade": "^1.9.2",
     "js-yaml": "^3.2.7",
+    "pa11y": "^1.6.3",
     "pg": "^4.3.0",
     "portscanner": "^1.0.0",
     "simplecrawler": "git://github.com/cgiffard/node-simplecrawler"

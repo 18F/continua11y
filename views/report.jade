@@ -1,0 +1,30 @@
+extends ./layout.jade
+
+block title
+    title Accessibility report for #{repo}
+
+block content
+    h1!= repo
+    img#badge
+    table.table
+        thead
+            tr
+                td URL
+                td total
+                td errors
+                td warnings
+                td notices
+        tbody
+            each result in results
+                tr
+                    td #{result.url}
+                    td #{result.total}
+                    td #{result.errors}
+                    td #{result.warnings}
+                    td #{result.notices}
+
+block script
+    script(src="//code.jquery.com/jquery-1.11.2.min.js")
+    script(src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js")
+    script.
+        $(document).ready(function (){$("#badge").attr("src","#{thisUrl}"+".svg");});

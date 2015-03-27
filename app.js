@@ -98,6 +98,26 @@ app.get("/:account/:repo", function (req, res){
     });
 });
 
+app.get("/api/:account/:repo", function (req, res){
+    // TODO: view completed and in-progress jobs
+    var client = pg.connect(conString, function (err, client, done){
+        if (err) {
+            console.log(err);
+        } else {
+            client.query("SELECT * FROM results WHERE repo = '"+req.params.account + "/" + req.params.repo+"'", function (err, result){
+                if (result.rows.length === 0){
+                    // TODO: Setup instructions if new
+
+                    res.send("I don't know that repo");
+                } else {
+                    res.send({results: result.rows});
+                }
+                done();
+            });
+        }
+    });
+});
+
 app.post("/check", bodyParser.json(), function (req, res){
 
     // TODO: implement job queue

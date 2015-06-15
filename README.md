@@ -2,28 +2,22 @@
 
 A continuous integration service using [pa11y](https://github.com/nature/pa11y), a web accessibility tool. Upon receiving a webhook from GitHub, it crawls specified websites and runs `pa11y` on all pages. It then stores the results of scans in a Postgres database and produces a badge with the result that can be used as an image on any website.
 
+## Usage
+
+Run `continua11y.sh` as part of your [Travis CI](https://travis-ci.org/) suite of tests. 
+
+1.  Copy the script to your repo and add `after_script: ./path/to/continua11y.sh` to your `.travis.yml` file.
+
+2.  Set a few [environmental variables](http://docs.travis-ci.com/user/environment-variables/#Global-Variables):
+
+    - RUN_SCRIPT: The command for serving your site. Make sure that the server detaches so that the script continues to run
+    - KILL_SCRIPT: The command to stop serving. This might be optional.
+    - USE_SITEMAP: If your site has a `sitemap.xml` file, set to `true` to use that instead of the spider.
+    - PORT: The port on `localhost` where your served site is found.
+
 ## Installation
 
     npm install
     node app.js # or foreman start
 
-## Usage
-
-Set up a [webhook](https://developer.github.com/webhooks/creating/) from GitHub to `example.com/check`. The app will check for a `pa11y.yaml` file in the root of the project to figure out which URLs to crawl. If it doesn't find that, it'll grab the repo's homepage, if specified.
-
-The only required element of the `pa11y.yaml` file is a `urls` array with each of the sites to scrape. You can also change the default values for the crawler and pa11y:
-
-    urls:
-    - example.com
-    - otherexample.org
-
-    crawler:
-      interval: 5000
-      maxConcurrency: 3
-      depth: 2
-
-    pa11y:
-      standard: "WCAG2A"
-      timeout: 60000
-      width: 1280
-      height: 800
+You may run into trouble installing `gh-badges`. Check [that project](https://github.com/badges/shields/blob/master/INSTALL.md#requirements) for more in-depth information.

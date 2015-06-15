@@ -4,19 +4,22 @@
   "description": "",
   "main": "app.js",
   "scripts": {
+    "start": "node app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/stvnrlly/continua11y"
+  },
+  "author": "stvnrlly",
   "license": "CC0",
   "dependencies": {
+    "async": "^1.2.1",
     "body-parser": "^1.12.0",
     "express": "^4.12.2",
     "gh-badges": "^1.1.0",
     "jade": "^1.9.2",
-    "js-yaml": "^3.2.7",
-    "pa11y": "^1.6.3",
     "pg": "^4.3.0",
-    "portscanner": "^1.0.0",
-    "simplecrawler": "git://github.com/cgiffard/node-simplecrawler"
+    "pg-bricks": "^0.3.4"
   }
 }

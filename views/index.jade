@@ -2,38 +2,21 @@ extends ./layout.jade
 
 block content
     .col-sm-10.col-sm-offset-1
-        h1 What this is
-        p 
-            | Continua11y uses 
-            a(href="https://github.com/nature/pa11y") pa11y 
-            | to calculate the accessibility of a project's websites under the WCAG2AAA standard.
-        p 
-            | We'll generate a nice badge that should go in the project's repo to display the current status of the sites.
-        h1 How to use Continua11y
-        p 
-            | Set up a 
-            a(href="https://developer.github.com/webhooks/creating/") webhook 
-            | from GitHub to https.continua11y.herokuapp.com/check. The app will check for a 
-            code pa11y.yaml
-            | file in the root of the project to figure out which URLs to crawl. If it doesn't find that, it'll grab the repo's homepage, if specified.
-        p
-            | The only required element of the 
-            code pa11y.yaml 
-            | file is a 
-            code urls 
-            | array with each of the sites to scrape. You can also change the default values for the crawler and pa11y:
-        pre 
-            | urls:
-            |   - example.com
-            |   - otherexample.org
-            | 
-            | crawler:
-            |   interval: 5000
-            |   maxConcurrency: 3
-            |   depth: 2
-            | 
-            | pa11y:
-            |   standard: "WCAG2A"
-            |   timeout: 60000
-            |   width: 1280
-            |   height: 800
+        h1 Recent results
+        table.table
+            thead
+                tr
+                    td repository
+                    td total
+                    td errors
+                    td warnings
+                    td notices
+            tbody
+                each report in repos
+                    tr
+                        td 
+                            a(href="#{report.repo_name}") #{report.repo_name}
+                        td #{report.total}
+                        td #{report.error}
+                        td #{report.warning}
+                        td #{report.notice}

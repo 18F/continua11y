@@ -9,7 +9,7 @@ block content
     table.table
         thead
             tr
-                td URL
+                td commit
                 td total
                 td errors
                 td warnings
@@ -17,11 +17,11 @@ block content
         tbody
             each result in results
                 tr
-                    td #{result.url}
+                    td #{result.commit}
                     td #{result.total}
-                    td #{result.errors}
-                    td #{result.warnings}
-                    td #{result.notices}
+                    td #{result.error}
+                    td #{result.warning}
+                    td #{result.notice}
 
 block script
     script(src="//code.jquery.com/jquery-1.11.2.min.js")

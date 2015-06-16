@@ -108,6 +108,7 @@ app.get("/repo/:account/:repo", function (req, res){
             client.query("SELECT repo_id FROM results WHERE repo_name = '"+req.params.account + "/" + req.params.repo+"'", function (err, result){
                 done();
                 client.query("SELECT * FROM repo_"+result.rows[0].repo_id+";", function (err, result){
+                    done();
                     if (result.rows.length === 0){
                         // TODO: Setup instructions if new
 
@@ -130,6 +131,7 @@ app.get("/commit/:account/:repo/:commit", function (req, res){
             client.query("SELECT repo_id FROM results WHERE repo_name = '"+req.params.account + "/" + req.params.repo+"'", function (err, result){
                 done();
                 client.query("SELECT * FROM commit_"+result.rows[0].repo_id+"_"+req.params.commit+";", function (err, result){
+                    done();
                     if (result.rows.length === 0){
                         // TODO: Setup instructions if new
 
@@ -149,15 +151,18 @@ app.get("/api/:account/:repo", function (req, res){
         if (err) {
             console.log(err);
         } else {
-            client.query("SELECT * FROM results WHERE repo = '"+req.params.account + "/" + req.params.repo+"'", function (err, result){
+            client.query("SELECT repo_id FROM results WHERE repo_name = '"+req.params.account + "/" + req.params.repo+"'", function (err, result){
                 done();
-                if (result.rows.length === 0){
-                    // TODO: Setup instructions if new
+                client.query("SELECT * FROM repo_"+result.rows[0].repo_id+";", function (err, result){
+                    done();
+                    if (result.rows.length === 0){
+                        // TODO: Setup instructions if new
 
-                    res.send("I don't know that repo");
-                } else {
-                    res.send({results: result.rows});
-                }
+                        res.send("I don't know that repo");
+                    } else {
+                        res.send({results: result.rows});
+                    }
+                });
             });
         }
     });

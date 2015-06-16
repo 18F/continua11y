@@ -1,6 +1,6 @@
 # continua11y
 
-A continuous integration service using [pa11y](https://github.com/nature/pa11y), a web accessibility tool. Upon receiving a webhook from GitHub, it crawls specified websites and runs `pa11y` on all pages. It then stores the results of scans in a Postgres database and produces a badge with the result that can be used as an image on any website.
+A continuous integration service using [pa11y](https://github.com/nature/pa11y), a web accessibility tool. It provides a script for generating accessibility statistics for all pages on a site, which is designed to run within a testing environment like Travis CI (though it can run anywhere). It then stores the results of scans in a Postgres database and produces a badge with the result that can be used as an image on any website.
 
 ## Usage
 

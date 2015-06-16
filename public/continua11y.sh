@@ -38,13 +38,13 @@ eval $RUN_SCRIPT
 # grab sitemap and store URLs
 if [[ -z "$USE_SITEMAP"]];
 then
-    wget -m http://localhost:${PORT} 2>&1 | grep '^--' | awk '{ print $3 }' | grep -v '\.\(css\|js\|png\|gif\|jpg\|JPG\)$' > sites
+    wget -m http://localhost:${PORT} 2>&1 | grep '^--' | awk '{ print $3 }' | grep -v '\.\(css\|js\|png\|gif\|jpg\|JPG\)$' > sites.txt
 else
-    wget -q http://localhost:${PORT}/sitemap.xml --no-cache -O - | egrep -o "http://codefordc.org[^<]+" > sites
+    wget -q http://localhost:${PORT}/sitemap.xml --no-cache -O - | egrep -o "http://codefordc.org[^<]+" > sites.txt
 fi
 
 # iterate through URLs and run runtest on each
-cat sites | while read a; do runtest $a; done
+cat sites.txt | while read a; do runtest $a; done
 
 # close down the server
 eval $KILL_SCRIPT
@@ -54,6 +54,5 @@ curl -X POST https://${CONTINUA11Y}/incoming -H "Content-Type: application/json"
 cat results.json
 
 # clean up
-rm results.json pa11y.json 
-# rm sites
+rm results.json pa11y.json sites.txt
 

@@ -1,4 +1,4 @@
-if [[ -z "$TRAVIS" ]];
+if [ -z "$TRAVIS" ]
 then
     TRAVIS_PULL_REQUEST=false
     TRAVIS_BRANCH="localtest"
@@ -10,7 +10,7 @@ then
     PORT=4000
     CONTINUA11Y="localhost:3000"
 else
-    npm install -g pa11y
+    npm install -g pa11y@1.7.0
     npm install -g json
 fi
 
@@ -36,10 +36,12 @@ function runtest () {
 eval $RUN_SCRIPT
 
 # grab sitemap and store URLs
-if [[ -z "$USE_SITEMAP"]];
+if [ -z "$USE_SITEMAP"]
 then
+    echo "using wget spider to get URLs"
     wget -m http://localhost:${PORT} 2>&1 | grep '^--' | awk '{ print $3 }' | grep -v '\.\(css\|js\|png\|gif\|jpg\|JPG\)$' > sites.txt
 else
+    echo "using sitemap to get URLs"
     wget -q http://localhost:${PORT}/sitemap.xml --no-cache -O - | egrep -o "http://codefordc.org[^<]+" > sites.txt
 fi
 
@@ -55,4 +57,3 @@ cat results.json
 
 # clean up
 rm results.json pa11y.json sites.txt
-

@@ -62,7 +62,7 @@ app.get("/", function (req, res){
     });
 });
 
-app.get("/:account/:repo.svg", function (req, res){
+app.get("/repo/:account/:repo.svg", function (req, res){
     pg.connect(conString, function (err, client, done){
         if (err) {
             console.log(err);
@@ -99,7 +99,7 @@ app.get("/:account/:repo.svg", function (req, res){
     });
 });
 
-app.get("/:account/:repo", function (req, res){
+app.get("/repo/:account/:repo", function (req, res){
     // TODO: view completed and in-progress jobs
     pg.connect(conString, function (err, client, done){
         if (err) {
@@ -113,7 +113,29 @@ app.get("/:account/:repo", function (req, res){
 
                         res.send("I don't know that repo");
                     } else {
-                        res.render('report', {results: result.rows, repo: req.params.account + "/" + req.params.repo, thisUrl: req.protocol + '://' + req.get('host') + req.originalUrl});
+                        res.render('report', {results: result.rows, repo: req.params.account + "/" + req.params.repo});
+                    }
+                });
+            });
+        }
+    });
+});
+
+app.get("/commit/:account/:repo/:commit", function (req, res){
+    // TODO: view completed and in-progress jobs
+    pg.connect(conString, function (err, client, done){
+        if (err) {
+            console.log(err);
+        } else {
+            client.query("SELECT repo_id FROM results WHERE repo_name = '"+req.params.account + "/" + req.params.repo+"'", function (err, result){
+                done();
+                client.query("SELECT * FROM commit_"+result.rows[0].repo_id+"_"+req.params.commit+";", function (err, result){
+                    if (result.rows.length === 0){
+                        // TODO: Setup instructions if new
+
+                        res.send("I don't know that repo");
+                    } else {
+                        res.render('commit', {results: result.rows, repo: req.params.account + "/" + req.params.repo, commit: req.params.commit});
                     }
                 });
             });

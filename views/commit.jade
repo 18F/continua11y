@@ -9,7 +9,7 @@ block content
     table.table
         thead
             tr
-                td commit
+                td url
                 td total
                 td errors
                 td warnings
@@ -17,8 +17,7 @@ block content
         tbody
             each result in results
                 tr
-                    td 
-                        a(href="/commit/#{repo}/#{result.commit}") #{result.commit}
+                    td #{result.url}
                     td #{result.total}
                     td #{result.error}
                     td #{result.warning}

@@ -6,7 +6,7 @@ A continuous integration service using [pa11y](https://github.com/nature/pa11y),
 
 Run `continua11y.sh` as part of your [Travis CI](https://travis-ci.org/) suite of tests. 
 
-1.  Copy the script to your repo and add `after_script: ./path/to/continua11y.sh` to your `.travis.yml` file.
+1.  Copy [the script](https://continua11y.herokuapp.com/continua11y.sh) to your repo and add `after_script: ./path/to/continua11y.sh` to your `.travis.yml` file.
 
 2.  Set a few [environmental variables](http://docs.travis-ci.com/user/environment-variables/#Global-Variables):
 
@@ -14,6 +14,7 @@ Run `continua11y.sh` as part of your [Travis CI](https://travis-ci.org/) suite o
     - KILL_SCRIPT: The command to stop serving. This might be optional.
     - USE_SITEMAP: If your site has a `sitemap.xml` file, set to `true` to use that instead of the spider.
     - PORT: The port on `localhost` where your served site is found.
+    - CONTINUA11Y: The location where `continua11y` is running. The main site is `continua11y.herokuapp.com`, but you can change this for testing purposes or whatever.
 
 ## Installation
 

@@ -8,6 +8,7 @@ then
     KILL_SCRIPT="pkill -f jekyll"
     USE_SITEMAP=false
     PORT=4000
+    CONTINUA11Y="localhost:3000"
 else
     npm install -g pa11y
     npm install -g json
@@ -49,7 +50,7 @@ cat sites | while read a; do runtest $a; done
 eval $KILL_SCRIPT
 
 # send the results on to continua11y
-curl -X POST http://localhost:3000/incoming -H "Content-Type: application/json" -d @results.json
+curl -X POST https://${CONTINUA11Y}/incoming -H "Content-Type: application/json" -d @results.json
 cat results.json
 
 # clean up

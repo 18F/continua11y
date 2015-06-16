@@ -184,6 +184,16 @@ app.post("/incoming", bodyParser.json({limit: '50mb'}), function (req, res){
     });
 });
 
+app.use(function (req, res) {
+    res.status(400);
+    res.render('404.jade');
+});
+
+app.use(function (req, res) {
+    res.status(500);
+    res.render('500.jade');
+});
+
 var server = app.listen(process.env.PORT || 3000, function() {
 
     var host = server.address().address;

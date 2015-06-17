@@ -7,16 +7,16 @@ block content
             thead
                 tr
                     td repository
-                    td total
                     td errors
                     td warnings
                     td notices
+                    td total
             tbody
                 each report in repos
                     tr
                         td 
                             a(href="/repo/#{report.repo_name}") #{report.repo_name}
-                        td #{report.total}
                         td #{report.error}
                         td #{report.warning}
                         td #{report.notice}
+                        td #{report.total}

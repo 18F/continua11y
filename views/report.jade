@@ -18,19 +18,19 @@ block content
         thead
             tr
                 td commit
-                td total
                 td errors
                 td warnings
                 td notices
+                td total
         tbody
             each result in results
                 tr(class="#{result.branch}")
                     td 
                         a(href="/commit/#{repo}/#{result.commit}") #{result.commit}
-                    td #{result.total}
                     td #{result.error}
                     td #{result.warning}
                     td #{result.notice}
+                    td #{result.total}
 
 block script
     script(src="//code.jquery.com/jquery-1.11.2.min.js")

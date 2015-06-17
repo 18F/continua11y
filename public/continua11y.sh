@@ -1,16 +1,17 @@
-if [ -z "$TRAVIS" ]
+if [[ -z "$TRAVIS" ]];
 then
     TRAVIS_PULL_REQUEST=false
-    TRAVIS_BRANCH="localtest"
-    TRAVIS_COMMIT="abcd1234"
-    TRAVIS_REPO_SLUG="codefordc/codefordc-2.0"
+    TRAVIS_BRANCH="test"
+    TRAVIS_COMMIT="testing123"
+    TRAVIS_REPO_SLUG="stvnrlly/continua11y"
     RUN_SCRIPT="bundle exec jekyll serve --detach"
     KILL_SCRIPT="pkill -f jekyll"
     USE_SITEMAP=false
     PORT=4000
     CONTINUA11Y="localhost:3000"
 else
-    npm install -g pa11y@1.7.0
+    npm install -g pa11y
+    npm install -g pa11y-reporter-1.0-json
     npm install -g json
 fi
 
@@ -20,7 +21,7 @@ fi
 echo '{"repository":"'$TRAVIS_REPO_SLUG'","commit":"'$TRAVIS_COMMIT'","data":{}}' | json > results.json
 
 function runtest () {
-    pa11y -r json $a > pa11y.json
+    pa11y -r 1.0-json $a > pa11y.json
     
     # single apostrophes ruin JSON parsing, so remove them
     sed "s/'//g" pa11y.json
@@ -36,7 +37,7 @@ function runtest () {
 eval $RUN_SCRIPT
 
 # grab sitemap and store URLs
-if [ -z "$USE_SITEMAP"]
+if [[ -z "$USE_SITEMAP" ]];
 then
     echo "using wget spider to get URLs"
     wget -m http://localhost:${PORT} 2>&1 | grep '^--' | awk '{ print $3 }' | grep -v '\.\(css\|js\|png\|gif\|jpg\|JPG\)$' > sites.txt

@@ -35,7 +35,7 @@ pg.connect(conString, function (err, client, done){
     }
 
     // both repo_name and repo_id used because the name can change but id stays the same
-    client.query("CREATE TABLE IF NOT EXISTS results(repo_name text UNIQUE NOT NULL, repo_id int UNIQUE NOT NULL, total int, error int, warning int, notice int);", function(err, result) {
+    client.query("CREATE TABLE IF NOT EXISTS results(repo_name text UNIQUE NOT NULL, repo_id int UNIQUE NOT NULL, total int, error int, warning int, notice int, timestamp TIMESTAMP NOT NULL);", function(err, result) {
         done();
         if (err) {
             return console.error('error running query', err);
@@ -48,7 +48,7 @@ app.get("/", function (req, res){
         if (err) {
             console.log(err);
         } else {
-            client.query("SELECT * FROM results;", function (err, result){
+            client.query("SELECT * FROM results ORDER BY timestamp DESC;", function (err, result){
                 done();
                 if (result.rows.length === 0){
                     // TODO: Setup instructions if new
@@ -107,7 +107,7 @@ app.get("/repo/:account/:repo", function (req, res){
         } else {
             client.query("SELECT repo_id FROM results WHERE repo_name = '"+req.params.account + "/" + req.params.repo+"'", function (err, result){
                 done();
-                client.query("SELECT * FROM repo_"+result.rows[0].repo_id+";", function (err, result){
+                client.query("SELECT * FROM repo_"+result.rows[0].repo_id+" ORDER BY timestamp DESC;", function (err, result){
                     done();
                     if (result.rows.length === 0){
                         // TODO: Setup instructions if new

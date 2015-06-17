@@ -1,21 +1,28 @@
 if [[ -z "$TRAVIS" ]];
 then
+    # local development options; run this script in an unrelated project 
     TRAVIS_PULL_REQUEST=false
     TRAVIS_BRANCH="test"
     TRAVIS_COMMIT="testing123"
+    # TRAVIS_REPO_SLUG must be a valid github repo
     TRAVIS_REPO_SLUG="stvnrlly/continua11y"
+    # change to whichever script you need to start the web server (make sure to detach so that the script continues)
     RUN_SCRIPT="bundle exec jekyll serve --detach"
+    # shut down the web server so that you can run the script again without conflicts
     KILL_SCRIPT="pkill -f jekyll"
-    USE_SITEMAP=false
+    # the port where the server will run
     PORT=4000
+    # if your site generates a sitemap, set this to true to use it instead of spidering
+    USE_SITEMAP=false
+    # the location for the locally-running version of continua11y
+    # for local development, set the protocol in line 62 to http, as well
     CONTINUA11Y="localhost:3000"
 else
+    # we're on travis, so install the tools needed
     npm install -g pa11y
-    npm install -g pa11y-reporter-1.0-json
+    npm install -g a11y-reporter-1.0-json
     npm install -g json
 fi
-
-# TODO: do something with branch name
 
 # set up the JSON file for full results to send
 echo '{"repository":"'$TRAVIS_REPO_SLUG'", "branch": "'$TRAVIS_BRANCH'","commit":"'$TRAVIS_COMMIT'","data":{}}' | json > results.json
@@ -37,7 +44,7 @@ function runtest () {
 eval $RUN_SCRIPT
 
 # grab sitemap and store URLs
-if [[ -z "$USE_SITEMAP" ]];
+if ! $USE_SITEMAP;
 then
     echo "using wget spider to get URLs"
     wget -m http://localhost:${PORT} 2>&1 | grep '^--' | awk '{ print $3 }' | grep -v '\.\(css\|js\|png\|gif\|jpg\|JPG\)$' > sites.txt

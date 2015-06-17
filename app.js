@@ -35,7 +35,7 @@ pg.connect(conString, function (err, client, done){
     }
 
     // both repo_name and repo_id used because the name can change but id stays the same
-    client.query("CREATE TABLE IF NOT EXISTS results(repo_name text UNIQUE NOT NULL, repo_id int UNIQUE NOT NULL, total int, error int, warning int, notice int, timestamp TIMESTAMP NOT NULL);", function(err, result) {
+    client.query("CREATE TABLE IF NOT EXISTS results(repo_name text UNIQUE NOT NULL, repo_id int UNIQUE NOT NULL, default_branch text, branch text, total int, error int, warning int, notice int, timestamp TIMESTAMP NOT NULL);", function(err, result) {
         done();
         if (err) {
             return console.error('error running query', err);

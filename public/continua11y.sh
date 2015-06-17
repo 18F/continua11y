@@ -18,7 +18,7 @@ fi
 # TODO: do something with branch name
 
 # set up the JSON file for full results to send
-echo '{"repository":"'$TRAVIS_REPO_SLUG'","commit":"'$TRAVIS_COMMIT'","data":{}}' | json > results.json
+echo '{"repository":"'$TRAVIS_REPO_SLUG'", "branch": "'$TRAVIS_BRANCH'","commit":"'$TRAVIS_COMMIT'","data":{}}' | json > results.json
 
 function runtest () {
     pa11y -r 1.0-json $a > pa11y.json

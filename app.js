@@ -107,16 +107,20 @@ app.get("/repo/:account/:repo", function (req, res){
         } else {
             client.query("SELECT repo_id FROM results WHERE repo_name = '"+req.params.account + "/" + req.params.repo+"'", function (err, result){
                 done();
-                client.query("SELECT * FROM repo_"+result.rows[0].repo_id+" ORDER BY timestamp DESC;", function (err, result){
-                    done();
-                    if (result.rows.length === 0){
-                        // TODO: Setup instructions if new
-
-                        res.send("I don't know that repo");
-                    } else {
-                        res.render('report', {results: result.rows, repo: req.params.account + "/" + req.params.repo});
-                    }
-                });
+                if (result.rows.length === 0){
+                    res.render("404");
+                } else {
+                    // TODO: fix this to be properly async
+                    var uniques = [];
+                    client.query("SELECT DISTINCT branch FROM repo_"+result.rows[0].repo_id+";", function (err, result){
+                        done();
+                        uniques = result.rows;
+                    });
+                    client.query("SELECT * FROM repo_"+result.rows[0].repo_id+" ORDER BY timestamp DESC;", function (err, result){
+                        done();
+                        res.render('report', {results: result.rows, repo: req.params.account + "/" + req.params.repo, branches: uniques});
+                    });
+                }
             });
         }
     });
@@ -133,9 +137,7 @@ app.get("/commit/:account/:repo/:commit", function (req, res){
                 client.query("SELECT * FROM commit_"+result.rows[0].repo_id+"_"+req.params.commit+";", function (err, result){
                     done();
                     if (result.rows.length === 0){
-                        // TODO: Setup instructions if new
-
-                        res.send("I don't know that repo");
+                        res.render("404");
                     } else {
                         res.render('commit', {results: result.rows, repo: req.params.account + "/" + req.params.repo, commit: req.params.commit});
                     }

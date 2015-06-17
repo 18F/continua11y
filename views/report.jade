@@ -6,6 +6,14 @@ block title
 block content
     h1!= repo
         img#badge
+    div.dropdown
+        button(class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true")
+            | Branches 
+            span.caret
+        ul(class="dropdown-menu" aria-labelledby="dropdownMenu1")
+            each branch in branches
+                li(class="branch-selector" id="#{branch.branch}")
+                    a(href="#") #{branch.branch}
     table.table
         thead
             tr
@@ -16,7 +24,7 @@ block content
                 td notices
         tbody
             each result in results
-                tr
+                tr(class="#{result.branch}")
                     td 
                         a(href="/commit/#{repo}/#{result.commit}") #{result.commit}
                     td #{result.total}
@@ -29,3 +37,7 @@ block script
     script(src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js")
     script.
         $(document).ready(function (){$("#badge").attr("src","/repo/#{repo}"+".svg");});
+        $(".branch-selector").click(function(){
+            $("tbody>tr").hide();
+            $("tr."+$(this).attr("id")).show();
+            });

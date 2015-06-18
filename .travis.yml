@@ -1,0 +1,15 @@
+language: node_js
+node_js:
+- "0.12"
+cache:
+    directories:
+    - node_modules
+script: npm test
+after_script: ./test/continua11y.sh
+env:
+    global:
+    - RUN_SCRIPT="forever start app.js"
+    - KILL_SCRIPT="forever stop app.js"
+    - USE_SITEMAP=false
+    - PORT=3000
+    - CONTINUA11Y="continua11y.herokuapp.com"

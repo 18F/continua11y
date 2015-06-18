@@ -15,7 +15,7 @@ then
     # if your site generates a sitemap, set this to true to use it instead of spidering
     USE_SITEMAP=false
     # the location for the locally-running version of continua11y
-    # for local development, set the protocol in line 62 to http, as well
+    # for local development, set the protocol for cURL to http, as well
     CONTINUA11Y="localhost:3000"
 else
     # we're on travis, so install the tools needed

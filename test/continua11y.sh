@@ -1,28 +1,6 @@
-if [[ -z "$TRAVIS" ]];
-then
-    # local development options; run this script in an unrelated project 
-    TRAVIS_PULL_REQUEST=false
-    TRAVIS_BRANCH="test"
-    TRAVIS_COMMIT="testing123"
-    # TRAVIS_REPO_SLUG must be a valid github repo
-    TRAVIS_REPO_SLUG="stvnrlly/continua11y"
-    # change to whichever script you need to start the web server (make sure to detach so that the script continues)
-    RUN_SCRIPT="forever start app.js"
-    # shut down the web server so that you can run the script again without conflicts
-    KILL_SCRIPT="forever stop app.js"
-    # the port where the server will run
-    PORT=3000
-    # if your site generates a sitemap, set this to true to use it instead of spidering
-    USE_SITEMAP=false
-    # the location for the locally-running version of continua11y
-    # for local development, set the protocol in line 62 to http, as well
-    CONTINUA11Y="localhost:3000"
-else
-    # we're on travis, so install the tools needed
-    npm install -g pa11y
-    npm install -g pa11y-reporter-1.0-json
-    npm install -g json
-fi
+npm install -g pa11y
+npm install -g pa11y-reporter-1.0-json
+npm install -g json
 
 # set up the JSON file for full results to send
 echo '{"repository":"'$TRAVIS_REPO_SLUG'", "branch": "'$TRAVIS_BRANCH'","commit":"'$TRAVIS_COMMIT'","data":{}}' | json > results.json

@@ -7,7 +7,7 @@ cache:
 sudo: required
 before_install: sudo apt-get install libcairo2-dev libjpeg8-dev libpango1.0-dev libgif-dev build-essential g++
 script: npm test
-after_script: sh ./test/continua11y.sh
+after_script: bash ./test/continua11y.sh
 env:
     global:
     - RUN_SCRIPT="forever start app.js"

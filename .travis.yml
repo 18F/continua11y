@@ -4,7 +4,8 @@ node_js:
 cache:
     directories:
     - node_modules
-before_install: apt-get install libcairo2-dev libjpeg8-dev libpango1.0-dev libgif-dev build-essential g++
+sudo: required
+before_install: sudo apt-get install libcairo2-dev libjpeg8-dev libpango1.0-dev libgif-dev build-essential g++
 script: npm test
 after_script: ./test/continua11y.sh
 env:

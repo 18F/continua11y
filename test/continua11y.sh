@@ -7,7 +7,7 @@ then
     # TRAVIS_REPO_SLUG must be a valid github repo
     TRAVIS_REPO_SLUG="stvnrlly/continua11y"
     # change to whichever script you need to start the web server (make sure to detach so that the script continues)
-    RUN_SCRIPT="forever start app.js"
+    RUN_SCRIPT="forever start --spinSleepTime 1000 --minUptime 3000 app.js"
     # shut down the web server so that you can run the script again without conflicts
     KILL_SCRIPT="forever stop app.js"
     # the port where the server will run
@@ -29,7 +29,7 @@ fi
 echo '{"repository":"'$TRAVIS_REPO_SLUG'", "branch": "'$TRAVIS_BRANCH'","commit":"'$TRAVIS_COMMIT'","data":{}}' | json > results.json
 
 function runtest () {
-    pa11y -r 1.0-json $a > pa11y.json
+    pa11y -r json $a > pa11y.json
     
     # single apostrophes ruin JSON parsing, so remove them
     sed "s/'//g" pa11y.json
@@ -61,8 +61,8 @@ cat sites.txt | while read a; do echo $a && runtest $a; done
 eval $KILL_SCRIPT
 
 # send the results on to continua11y
-curl -X POST https://${CONTINUA11Y}/incoming -H "Content-Type: application/json" -d @results.json
+curl -X POST http://${CONTINUA11Y}/incoming -H "Content-Type: application/json" -d @results.json
 cat results.json
 
 # clean up
-rm results.json pa11y.json sites.txt
+rm results.json pa11y.json # sites.txt

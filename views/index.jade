@@ -1,22 +1,21 @@
 extends ./layout.jade
 
 block content
-    .col-sm-10.col-sm-offset-1
-        h1 Recent results
-        table.table
-            thead
+    h1 Recent results
+    table.table
+        thead
+            tr
+                td repository
+                td errors
+                td warnings
+                td notices
+                td total
+        tbody
+            each report in repos
                 tr
-                    td repository
-                    td errors
-                    td warnings
-                    td notices
-                    td total
-            tbody
-                each report in repos
-                    tr
-                        td 
-                            a(href="/repo/#{report.repo_name}") #{report.repo_name}
-                        td #{report.error}
-                        td #{report.warning}
-                        td #{report.notice}
-                        td #{report.total}
+                    td 
+                        a(href="/repo/#{report.repo_name}") #{report.repo_name}
+                    td #{report.error}
+                    td #{report.warning}
+                    td #{report.notice}
+                    td #{report.total}

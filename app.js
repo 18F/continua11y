@@ -173,7 +173,8 @@ app.get("/api/:account/:repo", function (req, res){
 app.post("/incoming", bodyParser.json({limit: '50mb'}), function (req, res){
 
     res.send("ok");
-    console.log("received new report from travis for "+req.body.repository);
+    console.log(req.headers);
+    console.log("received new report for "+req.body.repository);
     https.get({
         hostname: "api.github.com",
         path: "/repos/"+req.body.repository,

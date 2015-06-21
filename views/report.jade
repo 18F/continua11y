@@ -26,7 +26,7 @@ block content
             each result in results
                 tr(class="#{result.branch}")
                     td 
-                        a(href="/commit/#{repo}/#{result.commit}") #{result.commit}
+                        a(href="/#{repo}/#{result.commit}") #{result.commit}
                     td #{result.error}
                     td #{result.warning}
                     td #{result.notice}
@@ -36,7 +36,7 @@ block script
     script(src="//code.jquery.com/jquery-1.11.2.min.js")
     script(src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js")
     script.
-        $(document).ready(function (){$("#badge").attr("src","/repo/#{repo}"+".svg");});
+        $(document).ready(function (){$("#badge").attr("src","/#{repo}"+".svg");});
         $(".branch-selector").click(function(){
             $("tbody>tr").hide();
             $("tr."+$(this).attr("id")).show();

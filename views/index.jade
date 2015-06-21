@@ -14,7 +14,7 @@ block content
             each report in repos
                 tr
                     td 
-                        a(href="/repo/#{report.repo_name}") #{report.repo_name}
+                        a(href="/#{report.repo_name}") #{report.repo_name}
                     td #{report.error}
                     td #{report.warning}
                     td #{report.notice}

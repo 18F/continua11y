@@ -29,7 +29,7 @@ fi
 echo '{"repository":"'$TRAVIS_REPO_SLUG'", "branch": "'$TRAVIS_BRANCH'","commit":"'$TRAVIS_COMMIT'","data":{}}' | json > results.json
 
 function runtest () {
-    pa11y -r json $a > pa11y.json
+    pa11y -r 1.0-json $a > pa11y.json
     
     # single apostrophes ruin JSON parsing, so remove them
     sed "s/'//g" pa11y.json
@@ -55,7 +55,7 @@ else
 fi
 
 # iterate through URLs and run runtest on each
-cat sites.txt | while read a; do echo $a && runtest $a; done
+cat sites.txt | while read a; do runtest $a; done
 
 # close down the server
 if ! $TRAVIS;

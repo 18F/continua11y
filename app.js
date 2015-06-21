@@ -99,17 +99,18 @@ app.get("/:account/:repo.svg", function (req, res){
                             res.send(svg);
                     });
                 } else {
-                    if (result.rows[0].error > 20){
-                        summary = "no";
+                    var count = result.rows[0].error;
+                    if (result.rows[0].error >= 50) {
+                        summary = count+" errors";
                         color = "red";
-                    } else if (10 > result.rows[0].error > 0){
-                        summary = "almost";
+                    } else if (50 > count && count > 0) {
+                        summary = count+" errors";
                         color = "yellow";
                     } else {
-                        summary = "yes";
+                        summary = count+" errors";
                         color = "brightgreen";
                     }
-                    badge({ text: [ "accessible", summary ], colorscheme: color },
+                    badge({ text: [ "accessibility", summary ], colorscheme: color },
                         function(svg, err) {
                             res.set('Content-Type', 'image/svg+xml');
                             res.send(svg);

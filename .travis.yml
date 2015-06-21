@@ -10,7 +10,7 @@ script: npm test
 after_script: bash ./test/continua11y.sh
 env:
     global:
-    - RUN_SCRIPT="forever start --spinSleepTime 1000 --minUptime 3000 app.js"
+    - RUN_SCRIPT="forever start --spinSleepTime 5000 --minUptime 5000 app.js"
     - KILL_SCRIPT="forever stop app.js"
     - USE_SITEMAP=false
     - PORT=3000

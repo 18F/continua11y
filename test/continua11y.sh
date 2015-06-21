@@ -41,7 +41,7 @@ function runtest () {
     json -I -f results.json -e 'this.data["'$a'"]='"${REPORT}"''
 }
 
-# start Jekyll server
+# start the server
 eval $RUN_SCRIPT
 
 # grab sitemap and store URLs
@@ -58,11 +58,13 @@ fi
 cat sites.txt | while read a; do echo $a && runtest $a; done
 
 # close down the server
-eval $KILL_SCRIPT
+if ! $TRAVIS;
+then
+    eval $KILL_SCRIPT
+fi
 
 # send the results on to continua11y
-curl -X POST http://${CONTINUA11Y}/incoming -H "Content-Type: application/json" -d @results.json
-cat results.json
+curl -X POST https://${CONTINUA11Y}/incoming -H "Content-Type: application/json" -d @results.json
 
 # clean up
-rm results.json pa11y.json # sites.txt
+rm results.json pa11y.json sites.txt

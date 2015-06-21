@@ -29,6 +29,9 @@ fi
 echo '{"repository":"'$TRAVIS_REPO_SLUG'", "branch": "'$TRAVIS_BRANCH'","commit":"'$TRAVIS_COMMIT'","data":{}}' | json > results.json
 
 function runtest () {
+    echo "attempting curl on site"
+    curl $a
+    echo "attempting pa11y on site"
     pa11y -r 1.0-json $a > pa11y.json
     
     # single apostrophes ruin JSON parsing, so remove them

@@ -173,7 +173,6 @@ app.get("/api/:account/:repo", function (req, res){
 app.post("/incoming", bodyParser.json({limit: '50mb'}), function (req, res){
 
     res.send("ok");
-    console.log(req.headers);
     console.log("received new report for "+req.body.repository);
     https.get({
         hostname: "api.github.com",
@@ -186,6 +185,11 @@ app.post("/incoming", bodyParser.json({limit: '50mb'}), function (req, res){
         });
         res.on('end', function() {
             githubBody = JSON.parse(githubBody);
+            if (req.headers.host === "travis-ci.org") {
+                console.log("running on travis");
+            } else {
+                console.log(req.headers.host);
+            }
             console.log("repo id: "+githubBody.id);
             processReport(githubBody, req.body);
         });

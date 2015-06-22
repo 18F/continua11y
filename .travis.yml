@@ -19,3 +19,4 @@ env:
     - USE_SITEMAP=false
     - PORT=3000
     - CONTINUA11Y="continua11y.herokuapp.com"
+    - DB=postgres:://postgres@localhost/postgres

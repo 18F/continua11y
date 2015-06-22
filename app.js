@@ -127,8 +127,9 @@ app.get("/:account/:repo", function (req, res){
         if (err) {
             console.log(err);
         } else {
-            client.query("SELECT repo_id FROM results WHERE repo_name = '"+req.params.account + "/" + req.params.repo+"'", function (err, result){
+            client.query("SELECT repo_id, default_branch FROM results WHERE repo_name = '"+req.params.account + "/" + req.params.repo+"'", function (err, result){
                 done();
+                var default_branch = result.rows[0].default_branch;
                 if (result.rows.length === 0){
                     res.render("404");
                 } else {
@@ -140,7 +141,7 @@ app.get("/:account/:repo", function (req, res){
                     });
                     client.query("SELECT * FROM repo_"+result.rows[0].repo_id+" ORDER BY timestamp DESC;", function (err, result){
                         done();
-                        res.render('report', {results: result.rows, repo: req.params.account + "/" + req.params.repo, branches: uniques});
+                        res.render('report', {results: result.rows, repo: req.params.account + "/" + req.params.repo, branches: uniques, default_branch: default_branch});
                     });
                 }
             });

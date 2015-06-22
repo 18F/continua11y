@@ -46,6 +46,7 @@ function runtest () {
 
 # start the server
 eval $RUN_SCRIPT
+sleep 3
 
 # grab sitemap and store URLs
 if ! $USE_SITEMAP;

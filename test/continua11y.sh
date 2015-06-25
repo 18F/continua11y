@@ -25,8 +25,10 @@ else
     npm install -g forever # for node testing
 fi
 
+TRAVIS_COMMIT_MSG="$(git log --format=%B --no-merges -n 1)"
+
 # set up the JSON file for full results to send
-echo '{"repository":"'$TRAVIS_REPO_SLUG'", "branch": "'$TRAVIS_BRANCH'","commit":"'$TRAVIS_COMMIT'","data":{}}' | json > results.json
+echo '{"repository":"'$TRAVIS_REPO_SLUG'", "branch": "'$TRAVIS_BRANCH'","commit":"'$TRAVIS_COMMIT'","commit_message":"'$TRAVIS_COMMIT_MSG'",data":{}}' | json > results.json
 
 function runtest () {
     pa11y -r 1.0-json $a > pa11y.json

@@ -62,6 +62,10 @@ app.get("/", function (req, res){
     });
 });
 
+app.get("/instructions", function (req, res){
+    res.render('instructions');
+});
+
 app.get("/:account/:repo/:commit", function (req, res){
     // TODO: view completed and in-progress jobs
     pg.connect(conString, function (err, client, done){
@@ -141,7 +145,7 @@ app.get("/:account/:repo", function (req, res){
                     });
                     client.query("SELECT * FROM repo_"+result.rows[0].repo_id+" ORDER BY timestamp DESC;", function (err, result){
                         done();
-                        res.render('report', {results: result.rows, repo: req.params.account + "/" + req.params.repo, branches: uniques, default_branch: default_branch});
+                        res.render('repo', {results: result.rows, repo: req.params.account + "/" + req.params.repo, branches: uniques, default_branch: default_branch});
                     });
                 }
             });

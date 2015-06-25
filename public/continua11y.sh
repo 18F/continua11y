@@ -1,3 +1,5 @@
+#! /usr/bin/env sh
+
 if [[ -z "$TRAVIS" ]];
 then
     # local development options; run this script in an unrelated project 

@@ -9,7 +9,7 @@ addons:
     postgresql: "9.4"
 before_install: sudo apt-get install libcairo2-dev libjpeg8-dev libpango1.0-dev libgif-dev build-essential g++
 script: npm test
-after_script: bash ./test/continua11y.sh
+after_script: ./test/continua11y.sh
 notifications:
     email: false
 env:

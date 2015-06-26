@@ -32,10 +32,11 @@ TRAVIS_COMMIT_MSG="$(git log --format=%B --no-merges -n 1)"
 echo '{"repository":"'$TRAVIS_REPO_SLUG'", "branch": "'$TRAVIS_BRANCH'","commit":"'$TRAVIS_COMMIT'","commit_message":"'$TRAVIS_COMMIT_MSG'","data":{}}' | json > results.json
 
 function runtest () {
-    pa11y -r 1.0-json $a > pa11y.json
+    echo "analyzing ${a}"
+    pa11y -r json $a > pa11y.json
     
     # single apostrophes ruin JSON parsing, so remove them
-    sed "s/'//g" pa11y.json
+    sed -n "s/'//g" pa11y.json
     
     # store JSON as a variable
     REPORT="$(cat pa11y.json)"

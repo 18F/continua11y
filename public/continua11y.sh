@@ -5,13 +5,13 @@ then
     # local development options; run this script in an unrelated project 
     TRAVIS_PULL_REQUEST=false
     TRAVIS_BRANCH="test"
-    TRAVIS_COMMIT="testing123"
+    TRAVIS_COMMIT="testing123456789"
     # TRAVIS_REPO_SLUG must be a valid github repo
     TRAVIS_REPO_SLUG="stvnrlly/continua11y"
     # change to whichever script you need to start the web server (make sure to detach so that the script continues)
-    RUN_SCRIPT="bundle exec jekyll serve --detach"
+    RUN_SCRIPT=""
     # shut down the web server so that you can run the script again without conflicts
-    KILL_SCRIPT="pkill -f jekyll"
+    KILL_SCRIPT=""
     # the port where the server will run
     PORT=4000
     # if your site generates a sitemap, set this to true to use it instead of spidering
@@ -30,10 +30,11 @@ fi
 echo '{"repository":"'$TRAVIS_REPO_SLUG'", "branch": "'$TRAVIS_BRANCH'","commit":"'$TRAVIS_COMMIT'","data":{}}' | json > results.json
 
 function runtest () {
-    pa11y -r 1.0-json $a > pa11y.json
+    echo "analyzing ${a}"
+    pa11y -r json $a > pa11y.json
     
     # single apostrophes ruin JSON parsing, so remove them
-    sed "s/'//g" pa11y.json
+    sed -n "s/'//g" pa11y.json
     
     # store JSON as a variable
     REPORT="$(cat pa11y.json)"

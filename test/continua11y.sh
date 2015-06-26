@@ -24,7 +24,6 @@ else
     npm install -g pa11y
     npm install -g pa11y-reporter-1.0-json
     npm install -g json
-    npm install -g forever # for node testing
 fi
 
 TRAVIS_COMMIT_MSG="$(git log --format=%B --no-merges -n 1)"

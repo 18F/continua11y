@@ -7,13 +7,15 @@ block content
     h1!= repo
         img#badge
     div.dropdown
-        button(class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true")
+        button(class="btn btn-default btn-sm dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true")
             | Branches 
             span.caret
         ul(class="dropdown-menu" aria-labelledby="dropdownMenu1")
             each branch in branches
-                li(class="branch-selector" id="#{branch.branch}")
-                    a(href="#") #{branch.branch}
+                li(class="branch-selector" id="#{branch}")
+                    a(href="#") #{branch}
+        |  showing: 
+        span.current_branch
     table.table
         thead
             tr
@@ -40,9 +42,17 @@ block script
         $(document).ready(function (){
             $("#badge").attr("src","/#{repo}"+".svg");
             $("tbody>tr").hide();
-            $("tr.#{default_branch}").show();
+            if ($.inArray("#{default_branch}", "#{branches}") > -1) {
+                $("tr.#{default_branch}").show();
+                $("span.current_branch").text("#{default_branch}");
+            } else {
+                $("tr.#{branches[0]}").show();
+                $("span.current_branch").text("#{branches[0]}");
+            }
+            
         });
         $(".branch-selector").click(function(){
             $("tbody>tr").hide();
             $("tr."+$(this).attr("id")).show();
+            $("span.current_branch").text($(this).attr("id"));
         });

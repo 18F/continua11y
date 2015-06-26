@@ -24,3 +24,7 @@ body {
 .container {
     padding-top: 50px;
 }
+
+#instructions {
+    padding-top: 40px;
+}

@@ -1,7 +1,10 @@
 extends ./layout.jade
 
 block content
-    h1 Recent results
+    div.row
+        div#instructions.pull-right
+            a(href="/instructions") setup guide
+        h1 Recent results
     table.table
         thead
             tr

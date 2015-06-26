@@ -1,0 +1,26 @@
+extends ./layout.jade
+
+block title
+    title How to Use continua11y
+
+block content
+    h1 How this works
+    p
+        | Every time you make a commit in your GitHub repository, continua11y
+        | will find all of the pages on your site and run <code>pa11y</code>
+        | on each of them. Then, we save that result and generate a badge that
+        | you can use to show off your progress.
+    h1 Set it up
+    p
+        | The best way to use continua11y is to add it as part of a continuous
+        | integration service like <a href="travis-ci.org">Travis CI</a>.
+    p First, copy the <code>continua11y.sh</code> script into your project.
+    p Add <code>after_script: ./path/to/continua11y.sh</code> to your <code>.travis.yml</code> file.
+    p Finally, add a few environmental variables to <code>.travis.yml</code>:
+        ul
+            li <code>RUN_SCRIPT</code>: The command for serving your site. Make sure that the server detaches so that the script continues to run
+            li <code>KILL_SCRIPT</code>: The command to stop serving. This is optional, but helps for local development.
+            li <code>USE_SITEMAP</code>: If your site has a sitemap.xml file, set to true to use that instead of the spider.
+            li <code>PORT</code>: The port on localhost where your served site is found.
+            li <code>CONTINUA11Y</code>: The location where continua11y is running. The main site is continua11y.herokuapp.com, but you can change this for testing purposes or whatever.
+

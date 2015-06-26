@@ -5,7 +5,7 @@ then
     # local development options; run this script in an unrelated project 
     TRAVIS_PULL_REQUEST=false
     TRAVIS_BRANCH="test"
-    TRAVIS_COMMIT="testing123456789"
+    TRAVIS_COMMIT="$(echo $RANDOM | md5)"
     # TRAVIS_REPO_SLUG must be a valid github repo
     TRAVIS_REPO_SLUG="stvnrlly/continua11y"
     # change to whichever script you need to start the web server (make sure to detach so that the script continues)

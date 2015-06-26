@@ -66,6 +66,27 @@ app.get("/instructions", function (req, res){
     res.render('instructions');
 });
 
+app.get("/api/:account/:repo", function (req, res){
+    // TODO: view completed and in-progress jobs
+    pg.connect(conString, function (err, client, done){
+        if (err) {
+            console.log(err);
+        } else {
+            client.query("SELECT repo_id FROM results WHERE repo_name = '"+req.params.account + "/" + req.params.repo+"'", function (err, result){
+                done();
+                if (result.rows.length === 0){
+                    res.send("I don't know that repo");
+                } else {
+                    client.query("SELECT * FROM repo_"+result.rows[0].repo_id+";", function (err, result){
+                        done();
+                        res.send({results: result.rows});
+                    });
+                }
+            });
+        }
+    });
+});
+
 app.get("/:account/:repo/:commit", function (req, res){
     // TODO: view completed and in-progress jobs
     pg.connect(conString, function (err, client, done){
@@ -133,11 +154,11 @@ app.get("/:account/:repo", function (req, res){
         } else {
             client.query("SELECT repo_id, default_branch FROM results WHERE repo_name = '"+req.params.account + "/" + req.params.repo+"'", function (err, result){
                 done();
-                var default_branch = result.rows[0].default_branch;
                 if (result.rows.length === 0){
                     res.render("404");
                 } else {
                     // TODO: fix this to be properly async
+                    var default_branch = result.rows[0].default_branch;
                     var distinct = [];
                     var branches = [];
                     client.query("SELECT DISTINCT branch FROM repo_"+result.rows[0].repo_id+";", function (err, result){
@@ -152,29 +173,6 @@ app.get("/:account/:repo", function (req, res){
                         res.render('repo', {results: result.rows, repo: req.params.account + "/" + req.params.repo, branches: branches, default_branch: default_branch});
                     });
                 }
-            });
-        }
-    });
-});
-
-app.get("/api/:account/:repo", function (req, res){
-    // TODO: view completed and in-progress jobs
-    pg.connect(conString, function (err, client, done){
-        if (err) {
-            console.log(err);
-        } else {
-            client.query("SELECT repo_id FROM results WHERE repo_name = '"+req.params.account + "/" + req.params.repo+"'", function (err, result){
-                done();
-                client.query("SELECT * FROM repo_"+result.rows[0].repo_id+";", function (err, result){
-                    done();
-                    if (result.rows.length === 0){
-                        // TODO: Setup instructions if new
-
-                        res.send("I don't know that repo");
-                    } else {
-                        res.send({results: result.rows});
-                    }
-                });
             });
         }
     });

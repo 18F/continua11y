@@ -3,6 +3,7 @@ var https = require("https");
 var bodyParser = require("body-parser");
 var pg = require("pg");
 var badge = require('gh-badges');
+var async = require("async");
 var processReport = require("./lib/report.js");
 
 var app = express();
@@ -161,17 +162,26 @@ app.get("/:account/:repo", function (req, res){
                     var default_branch = result.rows[0].default_branch;
                     var distinct = [];
                     var branches = [];
-                    client.query("SELECT DISTINCT branch FROM repo_"+result.rows[0].repo_id+";", function (err, result){
-                        done();
-                        distinct = result.rows;
-                    });
-                    client.query("SELECT * FROM repo_"+result.rows[0].repo_id+" ORDER BY timestamp DESC;", function (err, result){
-                        done();
-                        distinct.forEach(function (i){
-                            branches.push(i["branch"]);
-                        });
-                        res.render('repo', {results: result.rows, repo: req.params.account + "/" + req.params.repo, branches: branches, default_branch: default_branch});
-                    });
+                    async.series([
+                        function (callback){
+                            client.query("SELECT DISTINCT branch FROM repo_"+result.rows[0].repo_id+";", function (err, result){
+                                done();
+                                distinct = result.rows;
+                            });
+                            callback(null);
+                        },
+                        function (callback){
+                            client.query("SELECT * FROM repo_"+result.rows[0].repo_id+" ORDER BY timestamp DESC;", function (err, result){
+                                done();
+                                distinct.forEach(function (i){
+                                    branches.push(i["branch"]);
+                                });
+                                res.render('repo', {results: result.rows, repo: req.params.account + "/" + req.params.repo, branches: branches, default_branch: default_branch});
+                            });
+                            callback(null);
+                        }
+                    ]);
+                
                 }
             });
         }
@@ -185,7 +195,10 @@ app.post("/incoming", bodyParser.json({limit: '50mb'}), function (req, res){
     https.get({
         hostname: "api.github.com",
         path: "/repos/"+req.body.repository,
-        headers: {"User-Agent": "continua11y"}
+        headers: {
+            "User-Agent": "continua11y",
+            "Authorization": "token "+process.env.GITHUB_TOKEN
+        }
     }, function (res){
         var githubBody = "";
         res.on('data', function(d) {

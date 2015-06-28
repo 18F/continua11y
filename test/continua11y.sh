@@ -26,8 +26,8 @@ else
     npm install -g json
 fi
 
-echo TRAVIS_PULL_REQUEST
-echo TRAVIS_COMMIT_RANGE
+echo $TRAVIS_PULL_REQUEST
+echo $TRAVIS_COMMIT_RANGE
 
 TRAVIS_COMMIT_MSG="$(git log --format=%B --no-merges -n 1)"
 

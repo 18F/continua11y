@@ -24,7 +24,5 @@ block content
                     td #{result.total}
 
 block script
-    script(src="//code.jquery.com/jquery-1.11.2.min.js")
-    script(src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js")
     script.
         $(document).ready(function (){$("#badge").attr("src","/#{repo}"+".svg");});

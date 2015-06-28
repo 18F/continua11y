@@ -28,7 +28,11 @@ block content
             each result in results
                 tr(class="#{result.branch}")
                     td 
-                        a(href="/#{repo}/#{result.commit}") #{result.message} <code>#{result.short_commit}</code>
+                        | 
+                        a(href="/#{repo}/#{result.commit}") #{result.message}
+                        |  | 
+                        a(href="https://github.com/#{repo}/commit/#{result.commit}") 
+                            code #{result.short_commit}
                     td #{result.error}
                     td #{result.warning}
                     td #{result.notice}

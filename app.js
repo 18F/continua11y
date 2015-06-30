@@ -1,5 +1,5 @@
 var express = require("express");
-var https = require("https");
+var request = require("request");
 var bodyParser = require("body-parser");
 var pg = require("pg");
 var badge = require('gh-badges');
@@ -191,23 +191,15 @@ app.post("/incoming", bodyParser.json({limit: '50mb'}), function (req, res){
 
     res.send("ok");
     console.log("received new report for "+req.body.repository);
-    https.get({
-        hostname: "api.github.com",
-        path: "/repos/"+req.body.repository,
+    request.get({
+        uri: "https://api.github.com/repos/"+req.body.repository,
         headers: {
             "User-Agent": "continua11y",
             "Authorization": "token "+process.env.GITHUB_TOKEN
         }
-    }, function (res){
-        var githubBody = "";
-        res.on('data', function(d) {
-            githubBody += d;
-        });
-        res.on('end', function() {
-            githubBody = JSON.parse(githubBody);
-            console.log("repo id: "+githubBody.id);
-            processReport(githubBody, req.body);
-        });
+    }, function (err, res, body){
+        body = JSON.parse(body);
+        processReport(body, req.body);
     });
 });
 

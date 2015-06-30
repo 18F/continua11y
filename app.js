@@ -199,6 +199,7 @@ app.post("/incoming", bodyParser.json({limit: '50mb'}), function (req, res){
         }
     }, function (err, res, body){
         body = JSON.parse(body);
+        console.log(req.body);
         processReport(body, req.body);
     });
 });

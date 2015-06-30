@@ -33,7 +33,7 @@ echo '{"repository":"'$TRAVIS_REPO_SLUG'", "branch": "'$TRAVIS_BRANCH'","commit"
 
 function runtest () {
     echo "analyzing ${a}"
-    pa11y -r json $a > pa11y.json
+    pa11y -r 1.0-json $a > pa11y.json
     
     # single apostrophes ruin JSON parsing, so remove them
     sed -n "s/'//g" pa11y.json
@@ -71,6 +71,5 @@ fi
 # send the results on to continua11y
 curl -X POST https://${CONTINUA11Y}/incoming -H "Content-Type: application/json" -d @results.json
 
-cat results.json
 # clean up
 rm results.json pa11y.json sites.txt

@@ -158,7 +158,6 @@ app.get("/:account/:repo", function (req, res){
                 if (result.rows.length === 0){
                     res.render("404");
                 } else {
-                    // TODO: fix this to be properly async
                     var default_branch = result.rows[0].default_branch;
                     var distinct = [];
                     var branches = [];
@@ -174,7 +173,7 @@ app.get("/:account/:repo", function (req, res){
                             client.query("SELECT * FROM repo_"+result.rows[0].repo_id+" ORDER BY timestamp DESC;", function (err, result){
                                 done();
                                 distinct.forEach(function (i){
-                                    branches.push(i["branch"]);
+                                    branches.push(i.branch);
                                 });
                                 res.render('repo', {results: result.rows, repo: req.params.account + "/" + req.params.repo, branches: branches, default_branch: default_branch});
                             });

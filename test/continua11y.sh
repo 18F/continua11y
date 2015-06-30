@@ -26,13 +26,10 @@ else
     npm install -g json
 fi
 
-echo $TRAVIS_PULL_REQUEST
-echo $TRAVIS_COMMIT_RANGE
-
 TRAVIS_COMMIT_MSG="$(git log --format=%B --no-merges -n 1)"
 
 # set up the JSON file for full results to send
-echo '{"repository":"'$TRAVIS_REPO_SLUG'", "branch": "'$TRAVIS_BRANCH'","commit":"'$TRAVIS_COMMIT'","commit_message":"'$TRAVIS_COMMIT_MSG'","data":{}}' | json > results.json
+echo '{"repository":"'$TRAVIS_REPO_SLUG'", "branch": "'$TRAVIS_BRANCH'","commit":"'$TRAVIS_COMMIT'","commit_message":"'$TRAVIS_COMMIT_MSG'","pull_request":"'$TRAVIS_PULL_REQUEST'","commit_range":"'TRAVIS_COMMIT_RANGE'","data":{}}' | json > results.json
 
 function runtest () {
     echo "analyzing ${a}"

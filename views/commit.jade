@@ -3,17 +3,20 @@ extends ./layout.jade
 block title
     title Accessibility report for #{repo}
 
+block extra_css
+    link(rel="stylesheet", href="/css/font-awesome.min.css")
+
 block content
     h1!= repo
         img#badge
     table.table.table-hover.tablesorter
         thead
             tr
-                td url
-                td errors
-                td warnings
-                td notices
-                td total
+                th url
+                th errors
+                th warnings
+                th notices
+                th total
         tbody
             each result in results
                 tr
@@ -25,12 +28,20 @@ block content
 
 block extra_js
     script(src="/js/jquery.tablesorter.min.js")
+    script(src="/js/jquery.tablesorter.widgets.js")
 
 block script
     script.
+        $.tablesorter.themes.bootstrap = {
+            iconSortNone : 'fa fa-sort', // class name added to icon when column is not sorted
+            iconSortAsc  : 'fa fa-sort-asc', // class name added to icon when column has ascending sort
+            iconSortDesc : 'fa fa-sort-desc' // class name added to icon when column has descending sort
+        }
         $(document).ready(function (){
             $("#badge").attr("src","/#{repo}"+".svg");
             $(".table").tablesorter({
-                theme: "blue"
-                });
+                headerTemplate : '{content} {icon}',
+                widgets: ["uitheme"],
+                theme: "bootstrap"
+            });
         });

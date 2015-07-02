@@ -69,7 +69,9 @@ then
 fi
 
 # send the results on to continua11y
+echo "sending results to continua11y"
 curl -X POST https://${CONTINUA11Y}/incoming -H "Content-Type: application/json" -d @results.json
 
 # clean up
+echo "cleaning up"
 rm results.json pa11y.json sites.txt

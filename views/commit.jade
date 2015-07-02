@@ -6,7 +6,7 @@ block title
 block content
     h1!= repo
         img#badge
-    table.table
+    table.table.table-hover.tablesorter
         thead
             tr
                 td url
@@ -23,6 +23,14 @@ block content
                     td #{result.notice}
                     td #{result.total}
 
+block extra_js
+    script(src="/js/jquery.tablesorter.min.js")
+
 block script
     script.
-        $(document).ready(function (){$("#badge").attr("src","/#{repo}"+".svg");});
+        $(document).ready(function (){
+            $("#badge").attr("src","/#{repo}"+".svg");
+            $(".table").tablesorter({
+                theme: "blue"
+                });
+        });

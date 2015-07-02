@@ -6,6 +6,7 @@ html(lang="en")
         meta(charset="utf-8")
         link(rel="stylesheet", href="/css/bootstrap.min.css")
         link(rel="stylesheet", href="/css/style.css")
+        block extra_css
         link(rel="icon" type="image/png" href="/images/favicon.png")
     body
         a(href="/").homelink
@@ -22,4 +23,5 @@ html(lang="en")
                     
     script(src="/js/jquery-1.11.3.min.js")
     script(src="/js/bootstrap.min.js")
+    block extra_js
     block script

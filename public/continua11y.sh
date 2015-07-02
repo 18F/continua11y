@@ -26,12 +26,14 @@ else
     npm install -g json
 fi
 
+TRAVIS_COMMIT_MSG="$(git log --format=%B --no-merges -n 1)"
+
 # set up the JSON file for full results to send
-echo '{"repository":"'$TRAVIS_REPO_SLUG'", "branch": "'$TRAVIS_BRANCH'","commit":"'$TRAVIS_COMMIT'","data":{}}' | json > results.json
+echo '{"repository":"'$TRAVIS_REPO_SLUG'", "branch": "'$TRAVIS_BRANCH'","commit":"'$TRAVIS_COMMIT'","commit_message":"'$TRAVIS_COMMIT_MSG'","pull_request":"'$TRAVIS_PULL_REQUEST'","commit_range":"'TRAVIS_COMMIT_RANGE'","data":{}}' | json > results.json
 
 function runtest () {
     echo "analyzing ${a}"
-    pa11y -r json $a > pa11y.json
+    pa11y -r 1.0-json $a > pa11y.json
     
     # single apostrophes ruin JSON parsing, so remove them
     sed -n "s/'//g" pa11y.json

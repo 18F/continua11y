@@ -4,7 +4,7 @@ var bodyParser = require("body-parser");
 var pg = require("pg");
 var badge = require('gh-badges');
 var async = require("async");
-var processReport = require("./lib/report.js");
+var Reporter = require("./lib/reporter.js");
 
 var app = express();
 app.set('view engine', 'jade');
@@ -200,7 +200,7 @@ app.post("/incoming", bodyParser.json({limit: '50mb'}), function (req, res){
     }, function (err, res, body){
         body = JSON.parse(body);
         console.log(req.body);
-        processReport(body, req.body);
+        Reporter.start(body, req.body);
     });
 });
 

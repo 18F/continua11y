@@ -189,7 +189,7 @@ app.use(function (req, res) {
 });
 
 models.sequelize.sync({
-    // force: true
+    force: true
 }).then(function () {
     var server = app.listen(process.env.PORT || 3000, function() {
 

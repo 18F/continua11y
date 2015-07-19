@@ -5,7 +5,8 @@ block title
 
 block content
     h1!= repo
-        img#badge
+        each branch in branches
+            img(src="/#{repo}.svg?branch=#{branch}" id="#{branch}" class="bdge")
     div.dropdown
         button(class="btn btn-default btn-sm dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true")
             | Branches 
@@ -29,10 +30,10 @@ block content
                 tr(class="#{result.branch}")
                     td 
                         | 
-                        a(href="/#{repo}/#{result.commit}") #{result.message}
+                        a(href="/#{repo}/#{result.commit}") #{result.commitMessage}
                         |  | 
                         a(href="https://github.com/#{repo}/commit/#{result.commit}") 
-                            code #{result.short_commit}
+                            code #{result.shortCommit}
                     td #{result.error}
                     td #{result.warning}
                     td #{result.notice}
@@ -41,13 +42,15 @@ block content
 block script
     script.
         $(document).ready(function (){
-            $("#badge").attr("src","/#{repo}"+".svg");
             $("tbody>tr").hide();
+            $("img.bdge").hide();
             if ($.inArray("#{default_branch}", "#{branches}") > -1) {
                 $("tr.#{default_branch}").show();
+                $("img##{default_branch}").show();
                 $("span.current_branch").text("#{default_branch}");
             } else {
                 $("tr.#{branches[0]}").show();
+                $("img##{branches[0]}").show();
                 $("span.current_branch").text("#{branches[0]}");
             }
             

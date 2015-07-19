@@ -5,6 +5,7 @@ var pg = require("pg");
 var badge = require('gh-badges');
 var async = require("async");
 var Reporter = require("./lib/reporter.js");
+var models = require("./models");
 
 var app = express();
 app.set('view engine', 'jade');
@@ -27,39 +28,13 @@ var enableCORS = function(req, res, next) {
 
 app.use(enableCORS);
 
-// TODO: switch pg to use prepared statements: https://github.com/brianc/node-postgres/wiki/Prepared-Statements
-
-var conString = process.env.DATABASE_URL || "postgres://localhost/postgres";
-pg.connect(conString, function (err, client, done){
-    if (err) {
-        console.log(err);
-    }
-
-    // both repo_name and repo_id used because the name can change but id stays the same
-    client.query("CREATE TABLE IF NOT EXISTS results(repo_name text UNIQUE NOT NULL, repo_id int UNIQUE NOT NULL, default_branch text, branch text, total int, error int, warning int, notice int, timestamp TIMESTAMP NOT NULL);", function(err, result) {
-        done();
-        if (err) {
-            return console.error('error running query', err);
-        }
-    });
-});
-
 app.get("/", function (req, res){
-        pg.connect(conString, function (err, client, done){
-        if (err) {
-            console.log(err);
-        } else {
-            client.query("SELECT * FROM results ORDER BY timestamp DESC;", function (err, result){
-                done();
-                if (result.rows.length === 0){
-                    // TODO: Setup instructions if new
-
-                    res.send("No reports run yet");
-                } else {
-                    res.render('index', {repos: result.rows});
-                }
-            });
-        }
+    models.Repo.findAll({
+        order: [["updatedAt", "DESC"]],
+        limit: 20
+    }).then(function (repos) {
+        console.log(repos);
+        res.render("index", {repos: repos});
     });
 });
 
@@ -68,122 +43,122 @@ app.get("/instructions", function (req, res){
 });
 
 app.get("/api/:account/:repo", function (req, res){
-    // TODO: view completed and in-progress jobs
-    pg.connect(conString, function (err, client, done){
-        if (err) {
-            console.log(err);
-        } else {
-            client.query("SELECT repo_id FROM results WHERE repo_name = '"+req.params.account + "/" + req.params.repo+"'", function (err, result){
-                done();
-                if (result.rows.length === 0){
-                    res.send("I don't know that repo");
-                } else {
-                    client.query("SELECT * FROM repo_"+result.rows[0].repo_id+";", function (err, result){
-                        done();
-                        res.send({results: result.rows});
-                    });
-                }
-            });
-        }
+    models.Repo.findOne({
+        where: {
+            repoName: req.params.account+"/"+req.params.repo,
+        },
+        order: [['updatedAt', 'DESC']]
+    }).then(function (repo) {
+        models.Commit.findAll({
+            where: {
+                repo: repo.repo
+            }
+        }).then(function (commits) {
+            res.send({results: commits});
+        });
     });
 });
 
 app.get("/:account/:repo/:commit", function (req, res){
-    // TODO: view completed and in-progress jobs
-    pg.connect(conString, function (err, client, done){
-        if (err) {
-            console.log(err);
-        } else {
-            client.query("SELECT repo_id FROM results WHERE repo_name = '"+req.params.account + "/" + req.params.repo+"'", function (err, result){
-                done();
-                client.query("SELECT * FROM commit_"+result.rows[0].repo_id+"_"+req.params.commit+";", function (err, result){
-                    done();
-                    if (result.rows.length === 0){
-                        res.render("404");
-                    } else {
-                        res.render('commit', {results: result.rows, repo: req.params.account + "/" + req.params.repo, commit: req.params.commit});
-                    }
-                });
+    models.Commit.findOne({
+        where: {
+            commit: req.params.commit
+        },
+        order: [['updatedAt', 'DESC']]
+    }).then(function (commit) {
+        models.Url.findAll({
+            where: {
+                repo: commit.repo,
+                commit: req.params.commit
+            }
+        }).then(function (urls){
+            res.render('commit', {
+                results: urls, 
+                repo: req.params.account + "/" + req.params.repo,
+                commit: req.params.commit,
+                branch: commit.branch
             });
-        }
+        });
     });
 });
 
 app.get("/:account/:repo.svg", function (req, res){
-    pg.connect(conString, function (err, client, done){
-        if (err) {
-            console.log(err);
-        } else {
-            client.query("SELECT * FROM results WHERE repo_name = '"+req.params.account + "/" + req.params.repo+"'", function (err, result){
-                done();
-                var summary;
-                var color;
-                if (result.rows.length === 0){
-                    badge({ text: [ "accessible", "unknown" ], colorscheme: "lightgrey" },
-                        function(svg, err) {
-                            res.set('Content-Type', 'image/svg+xml');
-                            res.send(svg);
-                    });
+    models.Repo.findOne({
+        where: {
+            repoName: req.params.account+"/"+req.params.repo,
+        },
+        order: [['updatedAt', 'DESC']]
+    }).then(function (repo) {
+        models.Commit.findOne({
+            where: {
+                repo: repo.repo,
+                latest: true,
+                branch: req.query.branch || repo.defaultBranch
+            }
+        }).then(function (commit) {
+            var summary;
+            var color;
+            if (commit === null){
+                badge({ text: [ "accessible", "unknown" ], colorscheme: "lightgrey" },
+                    function(svg, err) {
+                        res.set('Content-Type', 'image/svg+xml');
+                        res.send(svg);
+                });
+            } else {
+                var count = commit.error;
+                if (count >= 50) {
+                    summary = count+" errors";
+                    color = "red";
+                } else if (50 > count && count > 0) {
+                    summary = count+" errors";
+                    color = "yellow";
                 } else {
-                    var count = result.rows[0].error;
-                    if (result.rows[0].error >= 50) {
-                        summary = count+" errors";
-                        color = "red";
-                    } else if (50 > count && count > 0) {
-                        summary = count+" errors";
-                        color = "yellow";
-                    } else {
-                        summary = count+" errors";
-                        color = "brightgreen";
-                    }
-                    badge({ text: [ "accessibility", summary ], colorscheme: color },
-                        function(svg, err) {
-                            res.set('Content-Type', 'image/svg+xml');
-                            res.send(svg);
-                    });
+                    summary = count+" errors";
+                    color = "brightgreen";
                 }
-            });
-        }
+                badge({ text: [ "accessibility", summary ], colorscheme: color },
+                    function(svg, err) {
+                        res.set('Content-Type', 'image/svg+xml');
+                        res.send(svg);
+                });
+            }
+        });
     });
 });
 
 app.get("/:account/:repo", function (req, res){
-    // TODO: view completed and in-progress jobs
-    pg.connect(conString, function (err, client, done){
-        if (err) {
-            console.log(err);
-        } else {
-            client.query("SELECT repo_id, default_branch FROM results WHERE repo_name = '"+req.params.account + "/" + req.params.repo+"'", function (err, result){
-                done();
-                if (result.rows.length === 0){
-                    res.render("404");
-                } else {
-                    var default_branch = result.rows[0].default_branch;
-                    var distinct = [];
-                    var branches = [];
-                    async.series([
-                        function (callback){
-                            client.query("SELECT DISTINCT branch FROM repo_"+result.rows[0].repo_id+";", function (err, result){
-                                done();
-                                distinct = result.rows;
-                            });
-                            callback(null);
-                        },
-                        function (callback){
-                            client.query("SELECT * FROM repo_"+result.rows[0].repo_id+" ORDER BY timestamp DESC;", function (err, result){
-                                done();
-                                distinct.forEach(function (i){
-                                    branches.push(i.branch);
-                                });
-                                res.render('repo', {results: result.rows, repo: req.params.account + "/" + req.params.repo, branches: branches, default_branch: default_branch});
-                            });
-                            callback(null);
+    models.Repo.findOne({
+        where: {
+            repoName: req.params.account+"/"+req.params.repo,
+        },
+        order: [['updatedAt', 'DESC']]
+    }).then(function (repo) {
+        var defaultBranch = repo.defaultBranch;
+        models.Commit.findAll({
+            where: {
+                repo: repo.repo
+            }
+        }).then(function (commits) {
+            var branches = [];
+            async.series([
+                function (callback) {
+                    for (var i=0; i<commits.length; i++) {
+                        if (commits[i].latest === true) {
+                            branches.push(commits[i].branch);
                         }
-                    ]);
-                
+                    }
+                    callback(null);
+                },
+                function (callback) {
+                    res.render('repo', {
+                        results: commits, 
+                        repo: req.params.account + "/" + req.params.repo, 
+                        branches: branches, 
+                        default_branch: defaultBranch});
+                    callback(null);
                 }
-            });
-        }
+            ]);
+        });
     });
 });
 
@@ -199,7 +174,6 @@ app.post("/incoming", bodyParser.json({limit: '50mb'}), function (req, res){
         }
     }, function (err, res, body){
         body = JSON.parse(body);
-        console.log(req.body);
         Reporter.start(body, req.body);
     });
 });
@@ -214,10 +188,14 @@ app.use(function (req, res) {
     res.render('500.jade');
 });
 
-var server = app.listen(process.env.PORT || 3000, function() {
+models.sequelize.sync({
+    // force: true
+}).then(function () {
+    var server = app.listen(process.env.PORT || 3000, function() {
 
-    var host = server.address().address;
-    var port = server.address().port;
+        var host = server.address().address;
+        var port = server.address().port;
 
-    console.log('Listening at http://%s:%s', host, port);
+        console.log('Listening at http://%s:%s', host, port);
+    });
 });

@@ -20,7 +20,7 @@ block content
         tbody
             each result in results
                 tr
-                    td #{result.url}
+                    td #{result.path}
                     td #{result.error}
                     td #{result.warning}
                     td #{result.notice}
@@ -38,7 +38,7 @@ block script
             iconSortDesc : 'fa fa-sort-desc' // class name added to icon when column has descending sort
         }
         $(document).ready(function (){
-            $("#badge").attr("src","/#{repo}"+".svg");
+            $("#badge").attr("src","/#{repo}.svg?branch=#{branch}");
             $(".table").tablesorter({
                 headerTemplate : '{content} {icon}',
                 widgets: ["uitheme"],

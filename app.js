@@ -1,10 +1,10 @@
 var express = require("express");
 var request = require("request");
 var bodyParser = require("body-parser");
-var pg = require("pg");
 var badge = require('gh-badges');
 var async = require("async");
 var Reporter = require("./lib/reporter.js");
+var Seed = require("./lib/seed.js");
 var models = require("./models");
 
 var app = express();
@@ -189,8 +189,11 @@ app.use(function (req, res) {
 });
 
 models.sequelize.sync({
-    force: true
+    force: process.env.FRESHDB || false
 }).then(function () {
+    if (process.env.FRESHDB === "true") {
+        Seed();
+    }
     var server = app.listen(process.env.PORT || 3000, function() {
 
         var host = server.address().address;

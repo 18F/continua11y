@@ -17,5 +17,6 @@ env:
     - RUN_SCRIPT="forever start --spinSleepTime 5000 --minUptime 5000 app.js"
     - KILL_SCRIPT="forever stop app.js"
     - USE_SITEMAP=false
+    - EXCLUDE="-X /fonts,/css,/js"
     - PORT=3000
     - CONTINUA11Y="continua11y.herokuapp.com"

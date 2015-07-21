@@ -1,6 +1,6 @@
 var models = require('../models');
 var request = require('request');
-var Reporter = require('./lib/reporter.js');
+var Reporter = require('../lib/reporter.js');
 
 exports.index = function (req, res){
     models.Repo.findAll({

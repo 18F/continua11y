@@ -16,6 +16,8 @@ then
     PORT=4000
     # if your site generates a sitemap, set this to true to use it instead of spidering
     USE_SITEMAP=false
+    # list of directories to exclude if not using sitemap, preceded by -X
+    EXCLUDE="-X /fonts,/css,/js"
     # the location for the locally-running version of continua11y
     # for local development, set the protocol for cURL to http, as well
     CONTINUA11Y="localhost:3000"
@@ -53,20 +55,25 @@ sleep 3 # sometimes things take time
 if ! $USE_SITEMAP;
 then
     echo "using wget spider to get URLs"
-    wget -m http://localhost:${PORT} 2>&1 | grep '^--' | awk '{ print $3 }' | grep -v '\.\(css\|js\|png\|gif\|jpg\|JPG\|json\|xml\)$' > sites.txt
+    wget -m http://localhost:${PORT} #{EXCLUDE} 2>&1 | grep '^--' | awk '{ print $3 }' | grep -v '\.\(css\|js\|png\|gif\|jpg\|JPG\|svg\|json\|xml\|txt\|sh\|eot\|eot?\|woff\|woff2\|ttf\)$' > sites.txt
 else
     echo "using sitemap to get URLs"
-    wget -q http://localhost:${PORT}/sitemap.xml --no-cache -O - | egrep -o "http://codefordc.org[^<]+" > sites.txt
+    wget -q http://localhost:${PORT}/sitemap.xml --no-cache -O - | egrep -o "http://localhost:${PORT}" > sites.txt
 fi
 
 # iterate through URLs and run runtest on each
 cat sites.txt | while read a; do runtest $a; done
 
 # close down the server
-eval $KILL_SCRIPT
+if ! $TRAVIS;
+then
+    eval $KILL_SCRIPT
+fi
 
 # send the results on to continua11y
+echo "sending results to continua11y"
 curl -X POST https://${CONTINUA11Y}/incoming -H "Content-Type: application/json" -d @results.json
 
 # clean up
+echo "cleaning up"
 rm results.json pa11y.json sites.txt

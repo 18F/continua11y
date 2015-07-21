@@ -16,6 +16,8 @@ then
     PORT=3000
     # if your site generates a sitemap, set this to true to use it instead of spidering
     USE_SITEMAP=false
+    # list of directories to exclude if not using sitemap, preceded by -X
+    EXCLUDE="-X /fonts,/css,/js"
     # the location for the locally-running version of continua11y
     # for local development, set the protocol for cURL to http, as well
     CONTINUA11Y="localhost:3000"
@@ -47,16 +49,16 @@ function runtest () {
 
 # start the server
 eval $RUN_SCRIPT
-sleep 3
+sleep 3 # sometimes things take time
 
 # grab sitemap and store URLs
 if ! $USE_SITEMAP;
 then
     echo "using wget spider to get URLs"
-    wget -m http://localhost:${PORT} 2>&1 | grep '^--' | awk '{ print $3 }' | grep -v '\.\(css\|js\|png\|gif\|jpg\|JPG\|svg\|json\|xml\|txt\|sh\|eot\|eot?\|woff\|woff2\|ttf\)$' > sites.txt
+    wget -m http://localhost:${PORT} ${EXCLUDE} 2>&1 | grep '^--' | awk '{ print $3 }' | grep -v '\.\(css\|js\|png\|gif\|jpg\|JPG\|svg\|json\|xml\|txt\|sh\|eot\|eot?\|woff\|woff2\|ttf\)$' > sites.txt
 else
     echo "using sitemap to get URLs"
-    wget -q http://localhost:${PORT}/sitemap.xml --no-cache -O - | egrep -o "http://codefordc.org[^<]+" > sites.txt
+    wget -q http://localhost:${PORT}/sitemap.xml --no-cache -O - | egrep -o "http://localhost:${PORT}" > sites.txt
 fi
 
 # iterate through URLs and run runtest on each

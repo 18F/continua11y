@@ -1,8 +1,15 @@
 var Sequelize = require("sequelize");
-var conString = process.env.DATABASE_URL || "postgres://localhost/postgres";
 var db        = {};
 
-var sequelize = new Sequelize(conString);
+if (process.env.NODE_ENV === 'TEST') {
+    var conString = "postgres://localhost/continua11y_test";
+} else {
+    var conString = process.env.DATABASE_URL || "postgres://localhost/postgres";
+}
+
+var sequelize = new Sequelize(conString, {
+    logging: false,
+});
 var models = ["Repo", "Commit", "Url"];
 models.forEach(function(file) {
     var model = sequelize.import(__dirname + "/" + file);

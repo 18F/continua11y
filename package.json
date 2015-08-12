@@ -5,7 +5,7 @@
   "main": "app.js",
   "scripts": {
     "start": "node app.js",
-    "test": "echo \"Error: no test specified\" && exit 0"
+    "test": "NODE_ENV=TEST ./node_modules/.bin/istanbul test ./node_modules/.bin/_mocha"
   },
   "repository": {
     "type": "git",
@@ -29,5 +29,10 @@
     "request": "^2.58.0",
     "sequelize": "^3.3.2",
     "url-parse": "^1.0.1"
+  },
+  "devDependencies": {
+    "chai": "^3.2.0",
+    "istanbul": "^0.3.17",
+    "mocha": "^2.2.5"
   }
 }

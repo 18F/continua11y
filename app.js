@@ -60,7 +60,7 @@ app.use(function (req, res) {
 models.sequelize.sync({
     force: process.env.FRESHDB || false
 }).then(function () {
-    if (process.env.FRESHDB === 'true') {
+    if (process.env.FRESHDB === 'TRUE') {
         seed();
     }
     var server = app.listen(process.env.PORT || 3000, function() {

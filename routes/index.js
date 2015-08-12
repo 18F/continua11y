@@ -1,6 +1,6 @@
 var models = require('../models');
 var request = require('request');
-var Reporter = require('../lib/reporter.js');
+var reporter = require('../lib/reporter.js');
 
 exports.index = function (req, res){
     models.Repo.findAll({
@@ -27,6 +27,6 @@ exports.incoming = function (req, res){
         }
     }, function (err, res, body){
         body = JSON.parse(body);
-        Reporter.start(body, req.body);
+        reporter.start(body, req.body);
     });
 };

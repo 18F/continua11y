@@ -57,6 +57,8 @@ block script
         });
         $(".branch-selector").click(function(){
             $("tbody>tr").hide();
+            $("img.bdge").hide();
             $("tr."+$(this).attr("id")).show();
+            $("img#"+$(this).attr("id")).show();
             $("span.current_branch").text($(this).attr("id"));
         });

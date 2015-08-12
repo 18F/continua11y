@@ -8,6 +8,7 @@ sudo: required
 addons:
     postgresql: "9.4"
 before_install: sudo apt-get install libcairo2-dev libjpeg8-dev libpango1.0-dev libgif-dev build-essential g++
+before_script: psql -c 'create database continua11y_test;' -U postgres
 script: npm test
 after_script: ./test/continua11y.sh
 notifications:

@@ -12,7 +12,8 @@ exports.get = function (req, res){
         models.Commit.findAll({
             where: {
                 repo: repo.repo
-            }
+            },
+            order: [['updatedAt', 'ASC']]
         }).then(function (commits) {
             var branches = [];
             async.series([

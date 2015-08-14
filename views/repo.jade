@@ -28,12 +28,7 @@ block content
         tbody
             each result in results
                 tr(class="#{result.branch}")
-                    td 
-                        | 
-                        a(href="/#{repo}/#{result.commit}") #{result.commitMessage}
-                        |  | 
-                        a(href="https://github.com/#{repo}/commit/#{result.commit}") 
-                            code #{result.shortCommit}
+                    td #[a(href="/#{repo}/#{result.commit}") #{result.commitMessage}] #[a(href="https://github.com/#{repo}/commit/#{result.commit}") #[code #{result.shortCommit}]] 
                     td #{result.error}
                     td #{result.warning}
                     td #{result.notice}
@@ -44,7 +39,9 @@ block script
         $(document).ready(function (){
             $("tbody>tr").hide();
             $("img.bdge").hide();
-            if ($.inArray("#{default_branch}", "#{branches}") > -1) {
+            var branches = "#{branches}".split(",");
+            console.log(branches);
+            if ($.inArray("#{default_branch}", branches) > -1) {
                 $("tr.#{default_branch}").show();
                 $("img##{default_branch}").show();
                 $("span.current_branch").text("#{default_branch}");
@@ -53,7 +50,6 @@ block script
                 $("img##{branches[0]}").show();
                 $("span.current_branch").text("#{branches[0]}");
             }
-            
         });
         $(".branch-selector").click(function(){
             $("tbody>tr").hide();

@@ -13,7 +13,7 @@ exports.get = function (req, res){
             where: {
                 repo: repo.repo
             },
-            order: [['updatedAt', 'ASC']]
+            order: [['updatedAt', 'DESC']]
         }).then(function (commits) {
             var branches = [];
             async.series([

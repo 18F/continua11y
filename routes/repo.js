@@ -6,7 +6,7 @@ exports.get = function (req, res){
         where: {
             repoName: req.params.account+'/'+req.params.repo,
         },
-        order: [['updatedAt', 'ASC']]
+        order: [['updatedAt', 'DESC']]
     }).then(function (repo) {
         var defaultBranch = repo.defaultBranch;
         models.Commit.findAll({

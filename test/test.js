@@ -51,7 +51,7 @@ describe('Reporter tests', function () {
                 default_branch: 'release',
             }, {
                 pull_request: false,
-                repository: 'new/test',
+                repository: 'test/one',
                 branch: 'release',
                 commit: '68huq45ty49hgwgghythwtyghi43ty8',
                 commit_message: 'creating new test repository',
@@ -78,7 +78,7 @@ describe('Reporter tests', function () {
                 }
             }).then(function (repo) {
                 assert.ok(repo);
-                assert.equal(repo.repoName, 'new/test');
+                assert.equal(repo.repoName, 'test/one');
                 assert.equal(repo.repo, 22446688);
                 assert.equal(repo.total, 10);
                 done();
@@ -127,7 +127,7 @@ describe('Reporter tests', function () {
                 default_branch: 'release',
             }, {
                 pull_request: false,
-                repository: 'fake/repository',
+                repository: 'test/two',
                 branch: 'release',
                 commit: 'akjhgf09870agf970aa07g98af7g9ad',
                 commit_message: 'creating new test repository',
@@ -154,7 +154,7 @@ describe('Reporter tests', function () {
                 }
             }).then(function (repo) {
                 assert.ok(repo);
-                assert.equal(repo.repoName, 'fake/repository');
+                assert.equal(repo.repoName, 'test/two');
                 assert.equal(repo.repo, 1234567);
                 assert.equal(repo.total, 10);
                 done();
@@ -203,7 +203,7 @@ describe('Reporter tests', function () {
                 default_branch: 'release',
             }, {
                 pull_request: true,
-                repository: 'fake/repository',
+                repository: 'test/two',
                 branch: 'release',
                 commit: '9843qhrepe4389hqg9438ghqrq39gh4',
                 commit_message: 'making a pull request',
@@ -230,7 +230,7 @@ describe('Reporter tests', function () {
                 }
             }).then(function (repo) {
                 assert.ok(repo);
-                assert.equal(repo.repoName, 'fake/repository');
+                assert.equal(repo.repoName, 'test/two');
                 assert.equal(repo.repo, 1234567);
                 // note that repo total is not updated
                 assert.equal(repo.total, 10);

@@ -28,11 +28,16 @@ else
     npm install -g json
 fi
 
+if [[ -z "$STANDARD" ]];
+then
+    STANDARD="WCAG2AAA"
+fi
+
 TRAVIS_COMMIT_MSG="$(git log --format=%B --no-merges -n 1)"
 TRAVIS_COMMIT_MSG="$(echo $TRAVIS_COMMIT_MSG | sed s/\"/\'/g)"
 
 # set up the JSON file for full results to send
-echo '{"repository":"'$TRAVIS_REPO_SLUG'", "branch": "'$TRAVIS_BRANCH'","commit":"'$TRAVIS_COMMIT'","commit_message":"'$TRAVIS_COMMIT_MSG'","pull_request":"'$TRAVIS_PULL_REQUEST'","commit_range":"'TRAVIS_COMMIT_RANGE'","data":{}}' | json > results.json
+echo '{"repository":"'$TRAVIS_REPO_SLUG'", "branch": "'$TRAVIS_BRANCH'","commit":"'$TRAVIS_COMMIT'","commit_message":"'$TRAVIS_COMMIT_MSG'","pull_request":"'$TRAVIS_PULL_REQUEST'","commit_range":"'TRAVIS_COMMIT_RANGE'","standard":"'$STANDARD'","data":{}}' | json > results.json
 
 function runtest () {
     echo "analyzing ${a}"
@@ -73,7 +78,8 @@ fi
 
 # send the results on to continua11y
 echo "sending results to continua11y"
-curl -X POST https://${CONTINUA11Y}/incoming -H "Content-Type: application/json" -d @results.json
+cat results.json
+# curl -X POST https://${CONTINUA11Y}/incoming -H "Content-Type: application/json" -d @results.json
 
 # clean up
 echo "cleaning up"

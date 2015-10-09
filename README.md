@@ -16,6 +16,7 @@ Run `continua11y.sh` as part of your [Travis CI](https://travis-ci.org/) suite o
     - KILL_SCRIPT: The command to stop serving. This might be optional.
     - USE_SITEMAP: If your site has a `sitemap.xml` file, set to `true` to use that instead of the spider.
     - PORT: The port on `localhost` where your served site is found.
+    - STANDARD: The accessibility standard used for testing. Defaults to `WCAG2AAA`, but can also be `Section508`, `WCAG2A`, or `WCAG2AA`.
     - CONTINUA11Y: The location where `continua11y` is running. The main site is `continua11y.herokuapp.com`, but you can change this for testing purposes or whatever.
 
 ## Installation

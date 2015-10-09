@@ -18,9 +18,9 @@ exports.make = function (req, res){
             var summary;
             var color;
             if (commit === null){
-                badge({ text: [ 'accessible', 'unknown' ], colorscheme: 'lightgrey' },
+                badge({ text: [ 'accessible', 'unknown' ], colorscheme: 'lightgrey', template: 'flat' },
                     function(svg, err) {
-                        res.set('Content-Type', 'image/svg+xml');
+                        res.set('Content-Type', 'image/svg+xml;charset=utf-8');
                         res.send(svg);
                 });
             } else {
@@ -35,9 +35,9 @@ exports.make = function (req, res){
                     summary = count+' errors';
                     color = 'brightgreen';
                 }
-                badge({ text: [ 'accessibility', summary ], colorscheme: color },
+                badge({ text: [ 'accessibility', summary ], colorscheme: color, template: 'flat' },
                     function(svg, err) {
-                        res.set('Content-Type', 'image/svg+xml');
+                        res.set('Content-Type', 'image/svg+xml;charset=utf-8');
                         res.send(svg);
                 });
             }

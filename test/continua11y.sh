@@ -9,15 +9,13 @@ then
     # TRAVIS_REPO_SLUG must be a valid github repo
     TRAVIS_REPO_SLUG="stvnrlly/continua11y"
     # change to whichever script you need to start the web server (make sure to detach so that the script continues)
-    RUN_SCRIPT="forever start --spinSleepTime 1000 --minUptime 3000 app.js"
+    RUN_SCRIPT="forever stop app.js && forever start --spinSleepTime 1000 --minUptime 3000 app.js"
     # shut down the web server so that you can run the script again without conflicts
     KILL_SCRIPT="forever stop app.js"
     # the port where the server will run
     PORT=3000
     # if your site generates a sitemap, set this to true to use it instead of spidering
     USE_SITEMAP=false
-    # list of directories to exclude if not using sitemap, preceded by -X
-    EXCLUDE="-X /fonts,/css,/js"
     # the location for the locally-running version of continua11y
     # for local development, set the protocol for cURL to http, as well
     CONTINUA11Y="localhost:3000"
@@ -40,47 +38,62 @@ TRAVIS_COMMIT_MSG="$(echo $TRAVIS_COMMIT_MSG | sed s/\"/\'/g)"
 echo '{"repository":"'$TRAVIS_REPO_SLUG'", "branch": "'$TRAVIS_BRANCH'","commit":"'$TRAVIS_COMMIT'","commit_message":"'$TRAVIS_COMMIT_MSG'","pull_request":"'$TRAVIS_PULL_REQUEST'","commit_range":"'TRAVIS_COMMIT_RANGE'","standard":"'$STANDARD'","data":{}}' | json > results.json
 
 function runtest () {
-    echo "analyzing ${a}"
-    pa11y -r 1.0-json -s $STANDARD $a > pa11y.json
-    
-    # single apostrophes ruin JSON parsing, so remove them
-    sed -n "s/'//g" pa11y.json
-    
-    # store JSON as a variable
-    REPORT="$(cat pa11y.json)"
+    URL="$(realpath --relative-base=. $file)"
+    if [[ $(file -b --mime-type $file) == "text/html" ]]
+    then
+        echo "analyzing ${URL}"
+        pa11y -r 1.0-json -s $STANDARD $URL > pa11y.json
+        
+        # single apostrophes ruin JSON parsing, so remove them
+        sed -n "s/'//g" pa11y.json
+        
+        # store JSON as a variable
+        REPORT="$(cat pa11y.json)"
 
-    # add this pa11y report into results.json
-    json -I -f results.json -e 'this.data["'$a'"]='"${REPORT}"''
+        # add this pa11y report into results.json
+        json -I -f ../results.json -e 'this.data["'$URL'"]='"${REPORT}"''
+        rm pa11y.json
+    else
+        echo "${URL} is not an html document, skipping"
+    fi
 }
 
 # start the server
 eval $RUN_SCRIPT
 sleep 3 # sometimes things take time
 
-# grab sitemap and store URLs
+# make local copy of the site
+mkdir temp
+cd temp
 if ! $USE_SITEMAP;
 then
-    echo "using wget spider to get URLs"
-    wget -m http://localhost:${PORT} ${EXCLUDE} 2>&1 | grep '^--' | awk '{ print $3 }' | grep -v '\.\(css\|js\|png\|gif\|jpg\|JPG\|svg\|json\|xml\|txt\|sh\|eot\|eot?\|woff\|woff2\|ttf\)$' > sites.txt
+    echo "using wget to mirror site"
+    wget --quiet --mirror --convert-links http://localhost:${PORT}
 else
-    echo "using sitemap to get URLs"
-    wget -q http://localhost:${PORT}/sitemap.xml --no-cache -O - | egrep -o "http://localhost:${PORT}" > sites.txt
+    echo "using sitemap to mirror relevant portion of site"
+    wget --quiet http://localhost:${PORT}/sitemap.xml --no-cache -O - | egrep -o "http://localhost:${PORT}" > sites.txt
+    cat sites.txt | while read a; do wget --convert-links --page-requisites $a; done
+    rm sites.txt
 fi
 
-# iterate through URLs and run runtest on each
-cat sites.txt | while read a; do runtest $a; done
-
-# close down the server
+# close down the server, since everything needed is downloaded locally
 if ! $TRAVIS;
 then
     eval $KILL_SCRIPT
 fi
 
+# iterate through URLs and run runtest on each
+for file in $(find .);
+do
+    runtest $file
+done
+cd ..
+
 # send the results on to continua11y
 echo "sending results to continua11y"
-cat results.json
-# curl -X POST https://${CONTINUA11Y}/incoming -H "Content-Type: application/json" -d @results.json
+cat results.json > incoming.json
+curl -X POST http://${CONTINUA11Y}/incoming -H "Content-Type: application/json" -d @results.json
 
 # clean up
 echo "cleaning up"
-rm results.json pa11y.json sites.txt
+rm -rf temp results.json

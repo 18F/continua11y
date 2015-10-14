@@ -2,7 +2,7 @@
 
 if [[ -z "$TRAVIS" ]];
 then
-    # local development options; run this script in an unrelated project 
+    # local development options
     TRAVIS_PULL_REQUEST=false
     TRAVIS_BRANCH="test"
     TRAVIS_COMMIT="$(echo $RANDOM | md5)"
@@ -28,14 +28,20 @@ else
     npm install -g json
 fi
 
+if [-z "$STANDARD"];
+then
+    STANDARD="WCAG2AAA"
+fi
+
 TRAVIS_COMMIT_MSG="$(git log --format=%B --no-merges -n 1)"
+TRAVIS_COMMIT_MSG="$(echo $TRAVIS_COMMIT_MSG | sed s/\"/\'/g)"
 
 # set up the JSON file for full results to send
-echo '{"repository":"'$TRAVIS_REPO_SLUG'", "branch": "'$TRAVIS_BRANCH'","commit":"'$TRAVIS_COMMIT'","commit_message":"'$TRAVIS_COMMIT_MSG'","pull_request":"'$TRAVIS_PULL_REQUEST'","commit_range":"'TRAVIS_COMMIT_RANGE'","data":{}}' | json > results.json
+echo '{"repository":"'$TRAVIS_REPO_SLUG'", "branch": "'$TRAVIS_BRANCH'","commit":"'$TRAVIS_COMMIT'","commit_message":"'$TRAVIS_COMMIT_MSG'","pull_request":"'$TRAVIS_PULL_REQUEST'","commit_range":"'TRAVIS_COMMIT_RANGE'","standard":"'$STANDARD'","data":{}}' | json > results.json
 
 function runtest () {
     echo "analyzing ${a}"
-    pa11y -r 1.0-json $a > pa11y.json
+    pa11y -r 1.0-json -s $STANDARD $a > pa11y.json
     
     # single apostrophes ruin JSON parsing, so remove them
     sed -n "s/'//g" pa11y.json

@@ -6,13 +6,20 @@ exports.get = function (req, res){
         where: {
             repoName: req.params.account+'/'+req.params.repo,
         },
-        order: [['updatedAt', 'ASC']]
+        order: [['updatedAt', 'DESC']]
     }).then(function (repo) {
-        var defaultBranch = repo.defaultBranch;
+        try {
+            var defaultBranch = repo.defaultBranch;
+        } catch (e) {
+            // entering incorrect owner/repo urls (or urls that looks like that)
+            // won't get caught by the middleware, so this catches them
+            res.render('404');
+        }
         models.Commit.findAll({
             where: {
                 repo: repo.repo
-            }
+            },
+            order: [['updatedAt', 'DESC']]
         }).then(function (commits) {
             var branches = [];
             async.series([

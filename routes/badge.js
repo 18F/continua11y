@@ -8,39 +8,45 @@ exports.make = function (req, res){
         },
         order: [['updatedAt', 'DESC']]
     }).then(function (repo) {
-        models.Commit.findOne({
-            where: {
-                repo: repo.repo,
-                latest: true,
-                branch: req.query.branch || repo.defaultBranch
-            }
-        }).then(function (commit) {
-            var summary;
-            var color;
-            if (commit === null){
-                badge({ text: [ 'accessible', 'unknown' ], colorscheme: 'lightgrey' },
-                    function(svg, err) {
-                        res.set('Content-Type', 'image/svg+xml');
-                        res.send(svg);
-                });
-            } else {
-                var count = commit.error;
-                if (count >= 50) {
-                    summary = count+' errors';
-                    color = 'red';
-                } else if (50 > count && count > 0) {
-                    summary = count+' errors';
-                    color = 'yellow';
-                } else {
-                    summary = count+' errors';
-                    color = 'brightgreen';
+        try {
+            models.Commit.findOne({
+                where: {
+                    repo: repo.repo,
+                    latest: true,
+                    branch: req.query.branch || repo.defaultBranch
                 }
-                badge({ text: [ 'accessibility', summary ], colorscheme: color },
-                    function(svg, err) {
-                        res.set('Content-Type', 'image/svg+xml');
-                        res.send(svg);
-                });
-            }
-        });
+            }).then(function (commit) {
+                var summary;
+                var color;
+                if (commit === null){
+                    badge({ text: [ 'accessible', 'unknown' ], colorscheme: 'lightgrey', template: 'flat' },
+                        function(svg, err) {
+                            res.set('Content-Type', 'image/svg+xml;charset=utf-8');
+                            res.send(svg);
+                    });
+                } else {
+                    var count = commit.error;
+                    if (count >= 50) {
+                        summary = count+' errors';
+                        color = 'red';
+                    } else if (50 > count && count > 0) {
+                        summary = count+' errors';
+                        color = 'yellow';
+                    } else {
+                        summary = count+' errors';
+                        color = 'brightgreen';
+                    }
+                    badge({ text: [ 'accessibility', summary ], colorscheme: color, template: 'flat' },
+                        function(svg, err) {
+                            res.set('Content-Type', 'image/svg+xml;charset=utf-8');
+                            res.send(svg);
+                    });
+                }
+            });
+        } catch (e) {
+            // entering incorrect owner/repo urls (or urls that looks like that)
+            // won't get caught by the middleware, so this catches them
+            res.render('404');
+        }
     });
 };

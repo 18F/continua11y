@@ -50,18 +50,20 @@ describe('Reporter tests', function () {
                 id: 22446688,
                 default_branch: 'release',
             }, {
-                pull_request: false,
+                pull_request: 'false',
                 repository: 'test/one',
                 branch: 'release',
                 commit: '68huq45ty49hgwgghythwtyghi43ty8',
                 commit_message: 'creating new test repository',
                 data: {
                     'website.com': {
-                        count: {
-                            total: 10,
-                            error: 1,
-                            warning: 3,
-                            notice: 6
+                        'pa11y': {
+                            'count': {
+                                total: 10,
+                                error: 1,
+                                warning: 3,
+                                notice: 6
+                            }
                         }
                     }
                 }
@@ -126,18 +128,20 @@ describe('Reporter tests', function () {
                 id: 1234567,
                 default_branch: 'release',
             }, {
-                pull_request: false,
+                pull_request: 'false',
                 repository: 'test/two',
                 branch: 'release',
                 commit: 'akjhgf09870agf970aa07g98af7g9ad',
                 commit_message: 'creating new test repository',
                 data: {
                     'website.com': {
-                        count: {
-                            total: 10,
-                            error: 1,
-                            warning: 3,
-                            notice: 6
+                        pa11y: {
+                            count: {
+                                total: 10,
+                                error: 1,
+                                warning: 3,
+                                notice: 6
+                            }
                         }
                     }
                 }
@@ -202,18 +206,20 @@ describe('Reporter tests', function () {
                 id: 1234567,
                 default_branch: 'release',
             }, {
-                pull_request: true,
+                pull_request: 'true',
                 repository: 'test/two',
                 branch: 'release',
                 commit: '9843qhrepe4389hqg9438ghqrq39gh4',
                 commit_message: 'making a pull request',
                 data: {
                     'website.com': {
-                        count: {
-                            total: 50,
-                            error: 5,
-                            warning: 10,
-                            notice: 35
+                        pa11y: {
+                            count: {
+                                total: 50,
+                                error: 5,
+                                warning: 10,
+                                notice: 35
+                            }
                         }
                     }
                 }
@@ -280,3 +286,9 @@ describe('Route tests', function () {
     it('shows commits on repo page');
     it('shows urls on commit page');
 });
+
+describe('HTML conversion tests', function () {
+    it('stores HTML in the database');
+    it('converts JSONified HTML to plain HTML');
+    it('displays the HTML correctly');
+})

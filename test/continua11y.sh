@@ -23,19 +23,22 @@ else
     # we're on travis, so install the tools needed
     npm install -g pa11y
     npm install -g pa11y-reporter-1.0-json
-    npm install -g json
+    npm install -g html-inline
+    # jq should already be installed on travis
 fi
 
+# set the default standard, if necessary
 if [[ -z "$STANDARD" ]];
 then
     STANDARD="WCAG2AAA"
 fi
 
+# get the most recent git commit message
 TRAVIS_COMMIT_MSG="$(git log --format=%B --no-merges -n 1)"
 TRAVIS_COMMIT_MSG="$(echo $TRAVIS_COMMIT_MSG | sed s/\"/\'/g)"
 
 # set up the JSON file for full results to send
-echo '{"repository":"'$TRAVIS_REPO_SLUG'", "branch": "'$TRAVIS_BRANCH'","commit":"'$TRAVIS_COMMIT'","commit_message":"'$TRAVIS_COMMIT_MSG'","pull_request":"'$TRAVIS_PULL_REQUEST'","commit_range":"'TRAVIS_COMMIT_RANGE'","standard":"'$STANDARD'","data":{}}' | json > results.json
+echo '{"repository":"'$TRAVIS_REPO_SLUG'", "branch": "'$TRAVIS_BRANCH'","commit":"'$TRAVIS_COMMIT'","commit_message":"'$TRAVIS_COMMIT_MSG'","pull_request":"'$TRAVIS_PULL_REQUEST'","commit_range":"'TRAVIS_COMMIT_RANGE'","standard":"'$STANDARD'","data":{}}' | jq '.' > results.json
 
 function runtest () {
     URL="$(realpath --relative-base=. $file)"
@@ -44,15 +47,21 @@ function runtest () {
         echo "analyzing ${URL}"
         pa11y -r 1.0-json -s $STANDARD $URL > pa11y.json
         
-        # single apostrophes ruin JSON parsing, so remove them
+        # single apostrophes mess up the json command below, so remove them
         sed -n "s/'//g" pa11y.json
-        
+
+        # compress external resources into the html and convert to json
+        html-inline -i $file -o site.html
+        himalaya site.html site.json
+
         # store JSON as a variable
         REPORT="$(cat pa11y.json)"
 
-        # add this pa11y report into results.json
-        json -I -f ../results.json -e 'this.data["'$URL'"]='"${REPORT}"''
-        rm pa11y.json
+        # add this report into results.json
+        # json -I -f ../results.json -e 'this.data["'$URL'"]='"$(cat site.json | jq --argjson pa11y "$(pa11y -r 1.0-json -s $STANDARD $URL)" '{data: $pa11y} + {html: .}')"''
+        jq -n --slurpfile a pa11y.json --slurpfile b site.json --slurpfile c ../results.json '$c | .[] * {data: {"'"${URL}"'": ({pa11y: $a | .[]} + {html: $b | .[]})}}' > ../temp.json
+        cp ../temp.json ../results.json
+        rm pa11y.json site.html site.json
     else
         echo "${URL} is not an html document, skipping"
     fi
@@ -91,7 +100,7 @@ cd ..
 
 # send the results on to continua11y
 echo "sending results to continua11y"
-cat results.json > incoming.json
+# cat results.json > incoming.json
 curl -X POST http://${CONTINUA11Y}/incoming -H "Content-Type: application/json" -d @results.json
 
 # clean up

@@ -16,8 +16,6 @@ then
     PORT=4000
     # if your site generates a sitemap, set this to true to use it instead of spidering
     USE_SITEMAP=false
-    # list of directories to exclude if not using sitemap, preceded by -X
-    EXCLUDE="-X /fonts,/css,/js"
     # the location for the locally-running version of continua11y
     # for local development, set the protocol for cURL to http, as well
     CONTINUA11Y="localhost:3000"
@@ -25,61 +23,97 @@ else
     # we're on travis, so install the tools needed
     npm install -g pa11y
     npm install -g pa11y-reporter-1.0-json
-    npm install -g json
+    npm install -g html-inline
+    # jq should already be installed on travis
 fi
 
-if [-z "$STANDARD"];
+red=`tput setaf 1`
+green=`tput setaf 2`
+yellow=`tput setaf 3`
+blue=`tput setaf 4`
+reset=`tput sgr0`
+
+# set the default standard, if necessary
+if [[ -z "$STANDARD" ]];
 then
     STANDARD="WCAG2AAA"
 fi
 
+# get the most recent git commit message
 TRAVIS_COMMIT_MSG="$(git log --format=%B --no-merges -n 1)"
 TRAVIS_COMMIT_MSG="$(echo $TRAVIS_COMMIT_MSG | sed s/\"/\'/g)"
 
 # set up the JSON file for full results to send
-echo '{"repository":"'$TRAVIS_REPO_SLUG'", "branch": "'$TRAVIS_BRANCH'","commit":"'$TRAVIS_COMMIT'","commit_message":"'$TRAVIS_COMMIT_MSG'","pull_request":"'$TRAVIS_PULL_REQUEST'","commit_range":"'TRAVIS_COMMIT_RANGE'","standard":"'$STANDARD'","data":{}}' | json > results.json
-
-function runtest () {
-    echo "analyzing ${a}"
-    pa11y -r 1.0-json -s $STANDARD $a > pa11y.json
-    
-    # single apostrophes ruin JSON parsing, so remove them
-    sed -n "s/'//g" pa11y.json
-    
-    # store JSON as a variable
-    REPORT="$(cat pa11y.json)"
-
-    # add this pa11y report into results.json
-    json -I -f results.json -e 'this.data["'$a'"]='"${REPORT}"''
-}
+echo '{"repository":"'$TRAVIS_REPO_SLUG'", "branch": "'$TRAVIS_BRANCH'","commit":"'$TRAVIS_COMMIT'","commit_message":"'$TRAVIS_COMMIT_MSG'","pull_request":"'$TRAVIS_PULL_REQUEST'","commit_range":"'TRAVIS_COMMIT_RANGE'","standard":"'$STANDARD'","data":{}}' | jq '.' > results.json
 
 # start the server
+echo "${green} >>> ${reset} starting the server"
 eval $RUN_SCRIPT
 sleep 3 # sometimes things take time
 
-# grab sitemap and store URLs
+# make local copy of the site
+mkdir temp
+cd temp
 if ! $USE_SITEMAP;
 then
-    echo "using wget spider to get URLs"
-    wget -m http://localhost:${PORT} #{EXCLUDE} 2>&1 | grep '^--' | awk '{ print $3 }' | grep -v '\.\(css\|js\|png\|gif\|jpg\|JPG\|svg\|json\|xml\|txt\|sh\|eot\|eot?\|woff\|woff2\|ttf\)$' > sites.txt
+    echo "${green} >>> ${reset} using wget to mirror site"
+    wget --quiet --mirror --convert-links http://localhost:${PORT}
 else
-    echo "using sitemap to get URLs"
-    wget -q http://localhost:${PORT}/sitemap.xml --no-cache -O - | egrep -o "http://localhost:${PORT}" > sites.txt
+    echo "${green} >>> ${reset} using sitemap to mirror relevant portion of site"
+    wget --quiet http://localhost:${PORT}/sitemap.xml --no-cache -O - | egrep -o "http://localhost:${PORT}" > sites.txt
+    cat sites.txt | while read a; do wget --convert-links --page-requisites $a; done
+    rm sites.txt
 fi
+echo "${green} <<< ${reset} found $(find . -type f | wc -l | sed 's/^ *//;s/ *$//') files in $(find . -mindepth 1 -type d | wc -l | sed 's/^ *//;s/ *$//') directories"
 
 # iterate through URLs and run runtest on each
-cat sites.txt | while read a; do runtest $a; done
+function runtest () {
+    URL="$(realpath --relative-base=. $file)"
+    if [[ $(file -b --mime-type $file) == "text/html" ]]
+    then
+        echo "${blue} |--------------------------------------- ${reset}"
+        echo "${blue} |-> ${reset} analyzing ${URL}"
+        pa11y -r 1.0-json -s $STANDARD $URL > pa11y.json
+        
+        # single apostrophes mess up the json command below, so remove them
+        sed -n "s/'//g" pa11y.json
 
-# close down the server
-if ! $TRAVIS;
-then
-    eval $KILL_SCRIPT
-fi
+        # compress external resources into the html and convert to json
+        html-inline -i $file -o site.html
+        # himalaya site.html site.json
+        openssl enc -aes128 -a -A -in site.html -out site.txt -k continua11y
+        echo "{\"html\":\"$(cat site.txt)\"}" > site.txt
+
+        # add this report into results.json
+        jq -n --slurpfile a pa11y.json --slurpfile b site.txt --slurpfile c ../results.json '$c | .[] * {data: {"'"${URL}"'": ({pa11y: $a | .[]} + {html: $b | .[].html})}}' > ../temp.json
+        cp ../temp.json ../results.json
+        ERROR="$(cat pa11y.json | jq .count.error)"
+        WARNING="$(cat pa11y.json | jq .count.warning)"
+        NOTICE="$(cat pa11y.json | jq .count.notice)"
+        echo "${green} <<< ${reset} ${red}error:${reset} ${ERROR} | ${yellow}warning:${reset} ${WARNING} | ${green}notice:${reset} ${NOTICE}"
+        rm pa11y.json site.html site.txt
+    else
+        echo "${blue} ||  ${reset} ${URL} is not an html document, skipping"
+    fi
+}
+
+echo "${green} >>> ${reset} beginning the analysis"
+for file in $(find .);
+do
+    runtest $file
+done
+cd ..
 
 # send the results on to continua11y
-echo "sending results to continua11y"
-curl -X POST https://${CONTINUA11Y}/incoming -H "Content-Type: application/json" -d @results.json
+echo "${green} >>> ${reset} sending results to continua11y"
+curl -s -X POST http://${CONTINUA11Y}/incoming -H "Content-Type: application/json" -d @results.json -o curl.txt
 
 # clean up
-echo "cleaning up"
-rm results.json pa11y.json sites.txt
+echo "${green} >>> ${reset} cleaning up"
+rm -rf temp results.json temp.json curl.txt
+
+if [[ -z "$TRAVIS" ]];
+then
+    echo "${green} >>> ${reset} closing the server"
+    eval $KILL_SCRIPT
+fi

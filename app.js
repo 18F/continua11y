@@ -61,6 +61,7 @@ models.sequelize.sync({
     force: process.env.FRESHDB || false
 }).then(function () {
     if (process.env.FRESHDB === 'TRUE') {
+        console.log('creating a fresh database');
         seed();
     }
     var server = app.listen(process.env.PORT || 3000, function() {

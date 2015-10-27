@@ -25,12 +25,12 @@ else
     npm install -g pa11y-reporter-1.0-json
     npm install -g html-inline
     # jq is already be installed on travis, but it needs to v1.5 to have --slurpfile
-    sudo wget https://github.com/stedolan/jq/releases/download/jq-1.5/jq-linux64 -O /usr/local/bin/jq
-    sudo chmod +x /usr/local/bin/jq
+    wget https://github.com/stedolan/jq/releases/download/jq-1.5/jq-linux64 -O /tmp/jq
+    # chmod +x /tmp/jq
+    echo $PATH
+    export PATH=/tmp:$PATH
+    echo $PATH
     which jq && jq --version
-    # install realpath
-    which realpath
-    which readlink
 fi
 
 red=`tput setaf 1`

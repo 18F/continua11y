@@ -25,8 +25,8 @@ else
     npm install -g pa11y-reporter-1.0-json
     npm install -g html-inline
     # jq should already be installed on travis
-    wget https://github.com/stedolan/jq/releases/download/jq-1.5/jq-linux64 -O /usr/local/bin/jq
-    chmod +x /usr/local/bin/jq
+    sudo wget https://github.com/stedolan/jq/releases/download/jq-1.5/jq-linux64 -O /usr/local/bin/jq
+    sudo chmod +x /usr/local/bin/jq
     jq --version
 fi
 

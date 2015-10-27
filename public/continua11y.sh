@@ -46,10 +46,16 @@ TRAVIS_COMMIT_MSG="$(echo $TRAVIS_COMMIT_MSG | sed s/\"/\'/g)"
 # set up the JSON file for full results to send
 echo '{"repository":"'$TRAVIS_REPO_SLUG'", "branch": "'$TRAVIS_BRANCH'","commit":"'$TRAVIS_COMMIT'","commit_message":"'$TRAVIS_COMMIT_MSG'","pull_request":"'$TRAVIS_PULL_REQUEST'","commit_range":"'TRAVIS_COMMIT_RANGE'","standard":"'$STANDARD'","data":{}}' | jq '.' > results.json
 
-# start the server
-echo "${green} >>> ${reset} starting the server"
-eval $RUN_SCRIPT
-sleep 3 # sometimes things take time
+# start the server, if necessary
+RUNNING="$(curl -s -o /dev/null -w "%{http_code}" http://localhost:${PORT})"
+if [[ $RUNNING == "000" ]]
+then
+    echo "${green} >>> ${reset} starting the server"
+    eval $RUN_SCRIPT
+    sleep 5 # sometimes things take time
+else
+    echo "${green} >>> ${reset} the server's already running"
+fi
 
 # make local copy of the site
 mkdir temp
@@ -90,7 +96,7 @@ function runtest () {
         ERROR="$(cat pa11y.json | jq .count.error)"
         WARNING="$(cat pa11y.json | jq .count.warning)"
         NOTICE="$(cat pa11y.json | jq .count.notice)"
-        echo "${green} <<< ${reset} ${red}error:${reset} ${ERROR} | ${yellow}warning:${reset} ${WARNING} | ${green}notice:${reset} ${NOTICE}"
+        echo "${green} <<< ${reset} pa11y says: ${red}error:${reset} ${ERROR} | ${yellow}warning:${reset} ${WARNING} | ${green}notice:${reset} ${NOTICE}"
         rm pa11y.json site.html site.txt
     else
         echo "${blue} ||  ${reset} ${URL} is not an html document, skipping"
@@ -98,22 +104,29 @@ function runtest () {
 }
 
 echo "${green} >>> ${reset} beginning the analysis"
+echo "${blue} |--------------------------------------- ${reset}"
 for file in $(find .);
 do
     runtest $file
 done
 cd ..
 
-# send the results on to continua11y
-echo "${green} >>> ${reset} sending results to continua11y"
-curl -s -X POST http://${CONTINUA11Y}/incoming -H "Content-Type: application/json" -d @results.json -o curl.txt
-
-# clean up
-echo "${green} >>> ${reset} cleaning up"
-rm -rf temp results.json temp.json curl.txt
-
-if [[ -z "$TRAVIS" ]];
+# shut down the server, if necessary
+if [[ $RUNNING == "000" ]];
 then
     echo "${green} >>> ${reset} closing the server"
     eval $KILL_SCRIPT
 fi
+
+# send the results on to continua11y
+echo "${green} >>> ${reset} sending results to continua11y"
+if [[ -z "$TRAVIS" ]]
+then
+    curl -s -X POST http://${CONTINUA11Y}/incoming -H "Content-Type: application/json" -d @results.json -o curl.txt
+else
+    curl -s -X POST https://continua11y.herokuapp.com/incoming -H "Content-Type: application/json" -d @results.json -o curl.txt
+fi
+
+# clean up
+echo "${green} >>> ${reset} cleaning up"
+rm -rf temp temp.json curl.txt results.json 

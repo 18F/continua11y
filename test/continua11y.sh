@@ -24,7 +24,10 @@ else
     npm install -g pa11y
     npm install -g pa11y-reporter-1.0-json
     npm install -g html-inline
-    # jq should already be installed on travis
+    # jq is already be installed on travis, but it needs to v1.5 to have --slurpfile
+    wget https://github.com/stedolan/jq/releases/download/jq-1.5/jq-linux64 -O /tmp/jq
+    chmod +x /tmp/jq
+    export PATH=/tmp:$PATH
 fi
 
 red=`tput setaf 1`
@@ -72,9 +75,13 @@ else
 fi
 echo "${green} <<< ${reset} found $(find . -type f | wc -l | sed 's/^ *//;s/ *$//') files in $(find . -mindepth 1 -type d | wc -l | sed 's/^ *//;s/ *$//') directories"
 
+function relpath() { 
+    python -c 'import sys, os.path; print os.path.relpath(sys.argv[1], sys.argv[2])' "$1" "${2:-$PWD}"; 
+}
+
 # iterate through URLs and run runtest on each
 function runtest () {
-    URL="$(realpath --relative-base=. $file)"
+    URL="$(relpath $file .)"
     if [[ $(file -b --mime-type $file) == "text/html" ]]
     then
         echo "${blue} |--------------------------------------- ${reset}"

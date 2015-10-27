@@ -3,9 +3,6 @@ extends ./layout.jade
 block title
     title Accessibility report for #{repo}
 
-block extra_css
-    link(rel="stylesheet", href="/css/font-awesome.min.css")
-
 block content
     h1!= repo
         img#badge
@@ -33,14 +30,16 @@ block extra_js
 block script
     script.
         $.tablesorter.themes.bootstrap = {
-            iconSortNone : 'fa fa-sort', // class name added to icon when column is not sorted
-            iconSortAsc  : 'fa fa-sort-asc', // class name added to icon when column has ascending sort
-            iconSortDesc : 'fa fa-sort-desc' // class name added to icon when column has descending sort
+            //- icons: 'pull-right',
+            iconSortNone : 'glyphicon glyphicon-sort', // class name added to icon when column is not sorted
+            iconSortAsc  : 'glyphicon glyphicon-chevron-up', // class name added to icon when column has ascending sort
+            iconSortDesc : 'glyphicon glyphicon-chevron-down' // class name added to icon when column has descending sort
         }
         $(document).ready(function (){
             $("#badge").attr("src","/#{repo}.svg?branch=#{branch}");
             $(".table").tablesorter({
                 headerTemplate : '{content} {icon}',
+                widthFixed: true,
                 widgets: ["uitheme"],
                 theme: "bootstrap"
             });

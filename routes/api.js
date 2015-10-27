@@ -7,12 +7,22 @@ exports.get = function (req, res){
         },
         order: [['updatedAt', 'DESC']]
     }).then(function (repo) {
-        models.Commit.findAll({
-            where: {
-                repo: repo.repo
-            }
-        }).then(function (commits) {
-            res.send({results: commits});
-        });
+        if (repo) {
+            models.Commit.findAll({
+                where: {
+                    repo: repo.repo
+                }
+            }).then(function (commits) {
+                res.send({
+                    status: 'success',
+                    results: commits
+                });
+            });
+        } else {
+            res.send({
+                status: 'error',
+                error: 'no such repo'
+            });
+        }
     });
 };

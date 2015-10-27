@@ -27,10 +27,7 @@ else
     # jq is already be installed on travis, but it needs to v1.5 to have --slurpfile
     wget https://github.com/stedolan/jq/releases/download/jq-1.5/jq-linux64 -O /tmp/jq
     chmod +x /tmp/jq
-    echo $PATH
     export PATH=/tmp:$PATH
-    echo $PATH
-    which jq && jq --version
 fi
 
 red=`tput setaf 1`

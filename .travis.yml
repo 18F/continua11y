@@ -4,7 +4,7 @@ node_js:
 cache:
     directories:
     - node_modules
-sudo: required
+sudo: false
 addons:
     postgresql: "9.4"
     apt:

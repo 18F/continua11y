@@ -25,6 +25,7 @@ else
     npm install -g pa11y-reporter-1.0-json
     npm install -g html-inline
     # jq should already be installed on travis
+    jq --version
 fi
 
 red=`tput setaf 1`

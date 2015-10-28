@@ -1,30 +1,12 @@
-#! /usr/bin/env sh
-
-if [[ -z "$TRAVIS" ]];
-then
-    # local development options
-    TRAVIS_PULL_REQUEST=false
-    TRAVIS_BRANCH="test"
-    TRAVIS_COMMIT="$(echo $RANDOM | md5)"
-    # TRAVIS_REPO_SLUG must be a valid github repo
-    TRAVIS_REPO_SLUG="stvnrlly/continua11y"
-    # change to whichever script you need to start the web server (make sure to detach so that the script continues)
-    RUN_SCRIPT=""
-    # shut down the web server so that you can run the script again without conflicts
-    KILL_SCRIPT=""
-    # the port where the server will run
-    PORT=4000
-    # if your site generates a sitemap, set this to true to use it instead of spidering
-    USE_SITEMAP=false
-    # the location for the locally-running version of continua11y
-    # for local development, set the protocol for cURL to http, as well
-    CONTINUA11Y="localhost:3000"
 else
     # we're on travis, so install the tools needed
     npm install -g pa11y
     npm install -g pa11y-reporter-1.0-json
     npm install -g html-inline
-    # jq should already be installed on travis
+    # jq is already be installed on travis, but it needs to v1.5 to have --slurpfile
+    wget https://github.com/stedolan/jq/releases/download/jq-1.5/jq-linux64 -O /tmp/jq
+    chmod +x /tmp/jq
+    export PATH=/tmp:$PATH
 fi
 
 red=`tput setaf 1`
@@ -72,9 +54,13 @@ else
 fi
 echo "${green} <<< ${reset} found $(find . -type f | wc -l | sed 's/^ *//;s/ *$//') files in $(find . -mindepth 1 -type d | wc -l | sed 's/^ *//;s/ *$//') directories"
 
+function relpath() { 
+    python -c 'import sys, os.path; print os.path.relpath(sys.argv[1], sys.argv[2])' "$1" "${2:-$PWD}"; 
+}
+
 # iterate through URLs and run runtest on each
 function runtest () {
-    URL="$(realpath --relative-base=. $file)"
+    URL="$(relpath $file .)"
     if [[ $(file -b --mime-type $file) == "text/html" ]]
     then
         echo "${blue} |--------------------------------------- ${reset}"
@@ -82,7 +68,7 @@ function runtest () {
         pa11y -r 1.0-json -s $STANDARD $URL > pa11y.json
         
         # single apostrophes mess up the json command below, so remove them
-        sed -n "s/'//g" pa11y.json
+        # sed -n "s/'//g" pa11y.json
 
         # compress external resources into the html and convert to json
         html-inline -i $file -o site.html

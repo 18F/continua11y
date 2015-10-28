@@ -89,7 +89,7 @@ function runtest () {
         pa11y -r 1.0-json -s $STANDARD $URL > pa11y.json
         
         # single apostrophes mess up the json command below, so remove them
-        sed -n "s/'//g" pa11y.json
+        # sed -n "s/'//g" pa11y.json
 
         # compress external resources into the html and convert to json
         html-inline -i $file -o site.html

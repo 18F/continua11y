@@ -22,7 +22,7 @@ notifications:
     email: false
 env:
     global:
-    - RUN_SCRIPT="FRESHDB=TRUE forever start --spinSleepTime 5000 --minUptime 5000 app.js"
+    - RUN_SCRIPT="FRESHDB=TRUE forever start --spinSleepTime 1000 --minUptime 3000 app.js"
     - KILL_SCRIPT="forever stop app.js"
     - USE_SITEMAP=false
     - PORT=3000

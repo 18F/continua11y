@@ -136,4 +136,5 @@ fi
 
 # clean up
 echo "${green} >>> ${reset} cleaning up"
+cat ~/.forever/*.log
 rm -rf temp temp.json curl.txt results.json 

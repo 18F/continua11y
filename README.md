@@ -2,8 +2,8 @@
 
 [![Accessibility](https://continua11y.herokuapp.com/stvnrlly/continua11y.svg?branch=release)](https://continua11y.herokuapp.com/stvnrlly/continua11y)
 [![Build Status](https://travis-ci.org/stvnrlly/continua11y.svg?branch=release)](https://travis-ci.org/stvnrlly/continua11y)
-[![Code Climate](https://codeclimate.com/repos/562ee833e30ba041800021fa/badges/bc873e963af6ff46b038/gpa.svg)](https://codeclimate.com/repos/562ee833e30ba041800021fa/feed)
-[![Test Coverage](https://codeclimate.com/repos/562ee833e30ba041800021fa/badges/bc873e963af6ff46b038/coverage.svg)](https://codeclimate.com/repos/562ee833e30ba041800021fa/coverage)
+[![Code Climate](https://codeclimate.com/github/stvnrlly/continua11y/badges/gpa.svg)](https://codeclimate.com/github/stvnrlly/continua11y)
+[![Test Coverage](https://codeclimate.com/github/stvnrlly/continua11y/badges/coverage.svg)](https://codeclimate.com/github/stvnrlly/continua11y/coverage)
 
 A continuous integration service using [pa11y](https://github.com/nature/pa11y), a web accessibility tool. It provides a script for generating accessibility statistics for all pages on a site, which is designed to run within a testing environment like Travis CI (though it can run anywhere). It then stores the results of scans in a Postgres database and produces a badge with the result that can be used as an image on any website.
 

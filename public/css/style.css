@@ -4,6 +4,14 @@ body {
     background: #fefefe;
 }
 
+a {
+    color: #135a97;
+}
+
+code {
+    color: #e10000;
+}
+
 .header {
     background-image: url(/images/spectrum.png);
     width: 100%;

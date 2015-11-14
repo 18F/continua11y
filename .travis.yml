@@ -16,8 +16,10 @@ addons:
         - build-essential
         - g++
 before_script: psql -c 'create database continua11y_test;' -U postgres
-script: npm test
-after_script: ./test/continua11y.sh
+script: npm test --coverage
+after_script:
+- codeclimate-test-reporter < coverage/lcov.info
+- ./test/continua11y.sh
 notifications:
     email: false
 env:

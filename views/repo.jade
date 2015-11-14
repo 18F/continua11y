@@ -15,8 +15,11 @@ block content
             each branch in branches
                 li(class="branch-selector" id="#{branch}")
                     a(href="#") #{branch}
-        |  showing: 
+        |  current branch: 
         span.current_branch
+    div
+        input(type="checkbox" class="show-pr" autocomplete="off")
+        |  show pull requests
     table.table
         thead
             tr
@@ -27,8 +30,11 @@ block content
                 th total
         tbody
             each result in results
-                tr(class="#{result.branch}")
-                    td #[a(href="/#{repo}/#{result.commit}") #{result.commitMessage}] #[a(href="https://github.com/#{repo}/commit/#{result.commit}") #[code #{result.shortCommit}]] 
+                tr(class="#{result.branch} pr-#{result.pullRequest}")
+                    if result.pullRequest
+                        td #[span(class="glyphicon glyphicon-share-alt" aria-hidden="true")] #[a(href="/#{repo}/#{result.commit}") #{result.commitMessage}] #[a(href="https://github.com/#{repo}/commit/#{result.commit}") #[code #{result.shortCommit}]] 
+                    else
+                        td #[a(href="/#{repo}/#{result.commit}") #{result.commitMessage}] #[a(href="https://github.com/#{repo}/commit/#{result.commit}") #[code #{result.shortCommit}]] 
                     td #{result.error}
                     td #{result.warning}
                     td #{result.notice}
@@ -36,25 +42,44 @@ block content
 
 block script
     script.
+        var active;
         $(document).ready(function (){
             $("tbody>tr").hide();
             $("img.bdge").hide();
+            $(".pr-true").hide();
             var branches = "#{branches}".split(",");
             console.log(branches);
             if ($.inArray("#{default_branch}", branches) > -1) {
-                $("tr.#{default_branch}").show();
+                $("tr.#{default_branch}.pr-false").show();
                 $("img##{default_branch}").show();
                 $("span.current_branch").text("#{default_branch}");
+                active = "#{default_branch}"
             } else {
-                $("tr.#{branches[0]}").show();
+                $("tr.#{branches[0]}.pr-false").show();
                 $("img##{branches[0]}").show();
                 $("span.current_branch").text("#{branches[0]}");
+                active = "#{branches[0]}"
             }
         });
         $(".branch-selector").click(function(){
             $("tbody>tr").hide();
             $("img.bdge").hide();
-            $("tr."+$(this).attr("id")).show();
+            if ($(".show-pr").is(":checked")) {
+                $("tr."+$(this).attr("id")).show();
+            } else {
+                $("tr.pr-false."+$(this).attr("id")).show();
+            }
             $("img#"+$(this).attr("id")).show();
             $("span.current_branch").text($(this).attr("id"));
+            active = $(this).attr("id")
+        });
+        $(".show-pr").click(function(){
+            if ($(".show-pr").is(":checked")) {
+                $("tbody>tr").hide();
+                $("tr."+active).show();
+            } else {
+                // could also do $("tr.pr-true."+active).hide();
+                $("tbody>tr").hide();
+                $("tr.pr-false."+active).show();
+            }
         });

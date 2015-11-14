@@ -6,7 +6,7 @@ block title
 block content
     h1!= repo
         each branch in branches
-            img(src="/#{repo}.svg?branch=#{branch}" id="#{branch}" class="bdge")
+            img(src="/#{repo}.svg?branch=#{branch}" class="#{branch} bdge" alt="accessibility for #{branch} branch")
     div.dropdown
         button(class="btn btn-default btn-sm dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true")
             | Branches 
@@ -18,7 +18,7 @@ block content
         |  current branch: 
         span.current_branch
     div
-        input(type="checkbox" class="show-pr" autocomplete="off")
+        input(type="checkbox" title="show pull requests" class="show-pr" autocomplete="off")
         |  show pull requests
     table.table
         thead
@@ -51,12 +51,12 @@ block script
             console.log(branches);
             if ($.inArray("#{default_branch}", branches) > -1) {
                 $("tr.#{default_branch}.pr-false").show();
-                $("img##{default_branch}").show();
+                $("img.#{default_branch}").show();
                 $("span.current_branch").text("#{default_branch}");
                 active = "#{default_branch}"
             } else {
                 $("tr.#{branches[0]}.pr-false").show();
-                $("img##{branches[0]}").show();
+                $("img.#{branches[0]}").show();
                 $("span.current_branch").text("#{branches[0]}");
                 active = "#{branches[0]}"
             }
@@ -69,7 +69,7 @@ block script
             } else {
                 $("tr.pr-false."+$(this).attr("id")).show();
             }
-            $("img#"+$(this).attr("id")).show();
+            $("img."+$(this).attr("id")).show();
             $("span.current_branch").text($(this).attr("id"));
             active = $(this).attr("id")
         });

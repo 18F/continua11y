@@ -14,8 +14,7 @@
   "author": "stvnrlly",
   "license": "CC0-1.0",
   "engines": {
-    "node": "0.12.x",
-    "npm": "2.10.x"
+    "node": "<4.0.0"
   },
   "dependencies": {
     "async": "^1.2.1",
@@ -32,10 +31,8 @@
   },
   "devDependencies": {
     "chai": "^3.2.0",
+    "codeclimate-test-reporter": "^0.1.1",
     "istanbul": "^0.3.17",
     "mocha": "^2.2.5"
-  },
-  "engines": {
-    "node": "<4.0.0"
   }
 }

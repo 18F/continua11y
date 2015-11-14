@@ -6,7 +6,7 @@ exports.get = function (req, res){
         where: {
             repoName: req.params.account+'/'+req.params.repo,
         },
-        order: [['updatedAt', 'DESC']]
+        order: [['createdAt', 'DESC']]
     }).then(function (repo) {
         try {
             var defaultBranch = repo.defaultBranch;
@@ -14,7 +14,7 @@ exports.get = function (req, res){
                 where: {
                     repo: repo.repo
                 },
-                order: [['updatedAt', 'DESC']]
+                order: [['createdAt', 'DESC']]
             }).then(function (commits) {
                 var branches = [];
                 async.series([

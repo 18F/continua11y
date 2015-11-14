@@ -31,7 +31,10 @@ block content
         tbody
             each result in results
                 tr(class="#{result.branch} pr-#{result.pullRequest}")
-                    td #[a(href="/#{repo}/#{result.commit}") #{result.commitMessage}] #[a(href="https://github.com/#{repo}/commit/#{result.commit}") #[code #{result.shortCommit}]] 
+                    if result.pullRequest
+                        td #[span(class="glyphicon glyphicon-share-alt" aria-hidden="true")] #[a(href="/#{repo}/#{result.commit}") #{result.commitMessage}] #[a(href="https://github.com/#{repo}/commit/#{result.commit}") #[code #{result.shortCommit}]] 
+                    else
+                        td #[a(href="/#{repo}/#{result.commit}") #{result.commitMessage}] #[a(href="https://github.com/#{repo}/commit/#{result.commit}") #[code #{result.shortCommit}]] 
                     td #{result.error}
                     td #{result.warning}
                     td #{result.notice}

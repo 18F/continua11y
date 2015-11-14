@@ -6,7 +6,7 @@ block title
 block content
     h1!= repo
         each branch in branches
-            img(src="/#{repo}.svg?branch=#{branch}" class="#{branch} bdge" alt="accessibility for #{branch} branch")
+            img(src="/#{repo}.svg?branch=#{branch}" class="#{branch} badge-img" alt="accessibility for #{branch} branch")
     div.dropdown
         button(class="btn btn-default btn-sm dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true")
             | Branches 
@@ -45,7 +45,7 @@ block script
         var active;
         $(document).ready(function (){
             $("tbody>tr").hide();
-            $("img.bdge").hide();
+            $("img.badge-img").hide();
             $(".pr-true").hide();
             var branches = "#{branches}".split(",");
             console.log(branches);
@@ -63,7 +63,7 @@ block script
         });
         $(".branch-selector").click(function(){
             $("tbody>tr").hide();
-            $("img.bdge").hide();
+            $("img.badge-img").hide();
             if ($(".show-pr").is(":checked")) {
                 $("tr."+$(this).attr("id")).show();
             } else {

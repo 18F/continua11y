@@ -5,7 +5,7 @@ block title
 
 block content
     h1!= repo
-        img#badge
+        img.badge-img(src="/#{repo}.svg?branch=#{branch}" alt="accessibility for #{branch} branch")
     table.table.table-hover.tablesorter
         thead
             tr
@@ -36,7 +36,6 @@ block script
             iconSortDesc : 'glyphicon glyphicon-chevron-down' // class name added to icon when column has descending sort
         }
         $(document).ready(function (){
-            $("#badge").attr("src","/#{repo}.svg?branch=#{branch}");
             $(".table").tablesorter({
                 headerTemplate : '{content} {icon}',
                 widthFixed: true,

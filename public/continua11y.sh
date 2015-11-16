@@ -1,3 +1,24 @@
+#! /usr/bin/env bash
+
+if [[ -z "$TRAVIS" ]];
+then
+    # local development options; run this script in an unrelated project 
+    TRAVIS_PULL_REQUEST=false
+    TRAVIS_BRANCH="test"
+    TRAVIS_COMMIT="$(echo $RANDOM | md5)"
+    # TRAVIS_REPO_SLUG must be a valid github repo
+    TRAVIS_REPO_SLUG=""
+    # change to whichever script you need to start the web server (make sure to detach so that the script continues)
+    RUN_SCRIPT=""
+    # shut down the web server so that you can run the script again without conflicts
+    KILL_SCRIPT=""
+    # the port where the server will run
+    PORT=3000
+    # if your site generates a sitemap, set this to true to use it instead of spidering
+    USE_SITEMAP=false
+    # the location for the locally-running version of continua11y
+    # for local development, set the protocol for cURL to http, as well
+    CONTINUA11Y=""
 else
     # we're on travis, so install the tools needed
     npm install -g pa11y

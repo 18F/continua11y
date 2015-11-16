@@ -48,7 +48,7 @@ app.get('/:account/:repo', reporoute.get);
 app.post('/incoming', bodyParser.json({limit: '50mb'}), routes.incoming);
 
 app.use(function (req, res) {
-    res.status(400);
+    res.status(404);
     res.render('404.jade');
 });
 

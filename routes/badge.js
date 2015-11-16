@@ -46,6 +46,7 @@ exports.make = function (req, res){
         } catch (e) {
             // entering incorrect owner/repo urls (or urls that looks like that)
             // won't get caught by the middleware, so this catches them
+            res.status('404');
             res.render('404');
         }
     });

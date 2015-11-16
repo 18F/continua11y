@@ -24,8 +24,8 @@ notifications:
     email: false
 env:
     global:
-    - RUN_SCRIPT="FRESHDB=TRUE forever start --spinSleepTime 5000 --minUptime 5000 app.js"
-    - KILL_SCRIPT="forever stop app.js"
+    - RUN_SCRIPT="1>/dev/null FRESHDB=TRUE forever start --spinSleepTime 5000 --minUptime 5000 app.js"
+    - KILL_SCRIPT="1>/dev/null forever stop app.js"
     - USE_SITEMAP=false
     - PORT=3000
     - CONTINUA11Y="continua11y.herokuapp.com"

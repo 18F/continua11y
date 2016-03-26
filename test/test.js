@@ -57,13 +57,11 @@ describe('Reporter tests', function () {
                 commit_message: 'creating new test repository',
                 data: {
                     'website.com': {
-                        'pa11y': {
-                            'count': {
-                                total: 10,
-                                error: 1,
-                                warning: 3,
-                                notice: 6
-                            }
+                        'count': {
+                            total: 10,
+                            error: 1,
+                            warning: 3,
+                            notice: 6
                         }
                     }
                 }
@@ -135,13 +133,11 @@ describe('Reporter tests', function () {
                 commit_message: 'creating new test repository',
                 data: {
                     'website.com': {
-                        pa11y: {
-                            count: {
-                                total: 10,
-                                error: 1,
-                                warning: 3,
-                                notice: 6
-                            }
+                        count: {
+                            total: 10,
+                            error: 1,
+                            warning: 3,
+                            notice: 6
                         }
                     }
                 }
@@ -213,13 +209,11 @@ describe('Reporter tests', function () {
                 commit_message: 'making a pull request',
                 data: {
                     'website.com': {
-                        pa11y: {
-                            count: {
-                                total: 50,
-                                error: 5,
-                                warning: 10,
-                                notice: 35
-                            }
+                        count: {
+                            total: 50,
+                            error: 5,
+                            warning: 10,
+                            notice: 35
                         }
                     }
                 }

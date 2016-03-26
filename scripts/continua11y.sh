@@ -9,7 +9,7 @@ then
     # TRAVIS_REPO_SLUG must be a valid github repo
     TRAVIS_REPO_SLUG="18F/continua11y"
     # change to whichever script you need to start the web server (make sure to detach so that the script continues)
-    RUN_SCRIPT="FRESHDB=TRUE forever start --spinSleepTime 1000 --minUptime 3000 app.js"
+    RUN_SCRIPT="1>/dev/null FRESHDB=TRUE forever start --spinSleepTime 1000 --minUptime 3000 app.js"
     # shut down the web server so that you can run the script again without conflicts
     KILL_SCRIPT="1>/dev/null forever stopall"
     # the port where the server will run
@@ -53,10 +53,8 @@ echo '{"repository":"'$TRAVIS_REPO_SLUG'", "branch": "'$TRAVIS_BRANCH'","commit"
 RUNNING="$(curl -s -o /dev/null -w "%{http_code}" http://localhost:${PORT})"
 if [[ $RUNNING == "000" ]]
 then
-    ls
-    pwd
     echo "${green} >>> ${reset} starting the server"
-    FRESHDB=TRUE forever start --spinSleepTime 1000 --minUptime 3000 app.js
+    nohup npm start &
     sleep 5 # sometimes things take time
 else
     echo "${green} >>> ${reset} the server's already running"

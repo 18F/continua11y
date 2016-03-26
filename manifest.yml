@@ -5,3 +5,6 @@ applications:
   instances: 1
   memory: 512M
   name: continua11y
+  buildpack: https://github.com/ddollar/heroku-buildpack-multi
+  services:
+  - continua11y-db

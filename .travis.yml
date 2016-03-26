@@ -19,7 +19,7 @@ before_script: psql -c 'create database continua11y_test;' -U postgres
 script: npm test --coverage
 after_script:
 - codeclimate-test-reporter < coverage/lcov.info
-- ./test/continua11y.sh
+- ./scripts/continua11y.sh
 notifications:
     email: false
 env:
@@ -29,3 +29,18 @@ env:
     - USE_SITEMAP=false
     - PORT=3000
     - CONTINUA11Y="continua11y.18f.gov"
+before_deploy:
+- export PATH=$HOME:$PATH
+- travis_retry curl -L -o $HOME/cf.tgz "https://cli.run.pivotal.io/stable?release=linux64-binary&version=6.15.0"
+- tar xzvf $HOME/cf.tgz -C $HOME
+- mkdir -p ${HOME}/Godeps/_workspace
+- export GOPATH=${HOME}/Godeps/_workspace
+- go get github.com/concourse/autopilot
+- cf install-plugin -f $GOPATH/bin/autopilot
+deploy:
+- provider: script
+  script: "./scripts/deploy.sh production"
+  skip_cleanup: true
+  on:
+    branch: develop
+    node: '0.12'

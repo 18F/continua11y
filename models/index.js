@@ -4,7 +4,7 @@ var db        = {};
 if (process.env.NODE_ENV === 'TEST') {
     var conString = "postgres://localhost/continua11y_test";
 } else {
-    var conString = process.env.DATABASE_URL || "postgres://localhost/postgres";
+    var conString = process.env.DATABASE_URL || "postgres://localhost/continua11y";
 }
 
 var sequelize = new Sequelize(conString, {

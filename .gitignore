@@ -4,4 +4,4 @@ npm-debug.log
 .env
 .DS_Store
 
-coverage/cf-ssh.yml
+cf-ssh.yml

@@ -2,12 +2,12 @@
 
 if [[ -z "$TRAVIS" ]];
 then
-    # local development options; run this script in an unrelated project 
+    # local development options; run this script in an unrelated project
     TRAVIS_PULL_REQUEST=false
     TRAVIS_BRANCH="test"
     TRAVIS_COMMIT="$(echo $RANDOM | md5)"
     # TRAVIS_REPO_SLUG must be a valid github repo
-    TRAVIS_REPO_SLUG="stvnrlly/continua11y"
+    TRAVIS_REPO_SLUG="18F/continua11y"
     # change to whichever script you need to start the web server (make sure to detach so that the script continues)
     RUN_SCRIPT="1>/dev/null FRESHDB=TRUE forever start --spinSleepTime 1000 --minUptime 3000 app.js"
     # shut down the web server so that you can run the script again without conflicts
@@ -75,8 +75,8 @@ else
 fi
 echo "${green} <<< ${reset} found $(find . -type f | wc -l | sed 's/^ *//;s/ *$//') files in $(find . -mindepth 1 -type d | wc -l | sed 's/^ *//;s/ *$//') directories"
 
-function relpath() { 
-    python -c 'import sys, os.path; print os.path.relpath(sys.argv[1], sys.argv[2])' "$1" "${2:-$PWD}"; 
+function relpath() {
+    python -c 'import sys, os.path; print os.path.relpath(sys.argv[1], sys.argv[2])' "$1" "${2:-$PWD}";
 }
 
 # iterate through URLs and run runtest on each
@@ -87,7 +87,7 @@ function runtest () {
         echo "${blue} |--------------------------------------- ${reset}"
         echo "${blue} |-> ${reset} analyzing ${URL}"
         pa11y -r 1.0-json -s $STANDARD $URL > pa11y.json
-        
+
         # single apostrophes mess up the json command below, so remove them
         # sed -n "s/'//g" pa11y.json
 
@@ -136,4 +136,4 @@ fi
 
 # clean up
 echo "${green} >>> ${reset} cleaning up"
-rm -rf temp temp.json curl.txt results.json 
+rm -rf temp temp.json curl.txt results.json

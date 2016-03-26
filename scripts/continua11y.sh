@@ -23,7 +23,7 @@ else
     # we're on travis, so install the tools needed
     npm install -g pa11y
     npm install -g pa11y-reporter-1.0-json
-    npm install -g html-inline
+    npm install -g forever
     # jq is already be installed on travis, but it needs to v1.5 to have --slurpfile
     wget https://github.com/stedolan/jq/releases/download/jq-1.5/jq-linux64 -O /tmp/jq
     chmod +x /tmp/jq

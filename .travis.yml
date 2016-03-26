@@ -17,7 +17,7 @@ addons:
         - g++
 before_script: psql -c 'create database continua11y_test;' -U postgres
 script: npm test --coverage
-after_success:
+after_script:
 - codeclimate-test-reporter < coverage/lcov.info
 - ./scripts/continua11y.sh
 notifications:
@@ -44,5 +44,5 @@ deploy:
   script: "./scripts/deploy.sh production"
   skip_cleanup: true
   on:
-    branch: develop
+    branch: release
     node: '0.12'

@@ -53,6 +53,8 @@ echo '{"repository":"'$TRAVIS_REPO_SLUG'", "branch": "'$TRAVIS_BRANCH'","commit"
 RUNNING="$(curl -s -o /dev/null -w "%{http_code}" http://localhost:${PORT})"
 if [[ $RUNNING == "000" ]]
 then
+    ls
+    pwd
     echo "${green} >>> ${reset} starting the server"
     FRESHDB=TRUE forever start --spinSleepTime 1000 --minUptime 3000 app.js
     sleep 5 # sometimes things take time

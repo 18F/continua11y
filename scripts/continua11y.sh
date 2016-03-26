@@ -54,7 +54,7 @@ RUNNING="$(curl -s -o /dev/null -w "%{http_code}" http://localhost:${PORT})"
 if [[ $RUNNING == "000" ]]
 then
     echo "${green} >>> ${reset} starting the server"
-    eval $RUN_SCRIPT
+    FRESHDB=TRUE forever start --spinSleepTime 1000 --minUptime 3000 app.js
     sleep 5 # sometimes things take time
 else
     echo "${green} >>> ${reset} the server's already running"

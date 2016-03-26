@@ -29,6 +29,8 @@ env:
     - USE_SITEMAP=false
     - PORT=3000
     - CONTINUA11Y="continua11y.18f.gov"
+    - CF_USERNAME=18f-acq_deployer
+    - secure: "lgJhmljgx5JWK8/WZNkyF5tkSg9AMWhjiglHp/TQaCymVDED68ZsiHD1PxXpY2364uluTYxhb5yBsjwNV1Ss0V7MGd5WIOxY6kDCC6Kt+p3iEs7uBxkUWcsutW76n1sRziAEKIW0KOseikPN4WO1RGuuR2XPRNIb9pNXDhqeQ/s="
 before_deploy:
 - export PATH=$HOME:$PATH
 - travis_retry curl -L -o $HOME/cf.tgz "https://cli.run.pivotal.io/stable?release=linux64-binary&version=6.15.0"

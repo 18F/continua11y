@@ -1,6 +1,6 @@
 # continua11y
 
-[![Accessibility](https://continua11y.herokuapp.com/stvnrlly/continua11y.svg?branch=release)](https://continua11y.herokuapp.com/stvnrlly/continua11y)
+[![Accessibility](https://continua11y.18f.gov/stvnrlly/continua11y.svg?branch=release)](https://continua11y.18f.gov/stvnrlly/continua11y)
 [![Build Status](https://travis-ci.org/stvnrlly/continua11y.svg?branch=release)](https://travis-ci.org/stvnrlly/continua11y)
 [![Code Climate](https://codeclimate.com/github/stvnrlly/continua11y/badges/gpa.svg)](https://codeclimate.com/github/stvnrlly/continua11y)
 [![Test Coverage](https://codeclimate.com/github/stvnrlly/continua11y/badges/coverage.svg)](https://codeclimate.com/github/stvnrlly/continua11y/coverage)
@@ -9,9 +9,9 @@ A continuous integration service using [pa11y](https://github.com/nature/pa11y),
 
 ## Usage
 
-Run `continua11y.sh` as part of your [Travis CI](https://travis-ci.org/) suite of tests. 
+Run `continua11y.sh` as part of your [Travis CI](https://travis-ci.org/) suite of tests.
 
-1.  Copy [the script](https://continua11y.herokuapp.com/continua11y.sh) to your repo and add `after_script: ./path/to/continua11y.sh` to your `.travis.yml` file.
+1.  Copy [the script](https://continua11y.18f.gov/continua11y.sh) to your repo and add `after_script: ./path/to/continua11y.sh` to your `.travis.yml` file.
 
 2.  Set a few [environmental variables](http://docs.travis-ci.com/user/environment-variables/#Global-Variables):
 
@@ -20,7 +20,7 @@ Run `continua11y.sh` as part of your [Travis CI](https://travis-ci.org/) suite o
     - USE_SITEMAP: If your site has a `sitemap.xml` file, set to `true` to use that instead of the spider.
     - PORT: The port on `localhost` where your served site is found.
     - STANDARD: The accessibility standard used for testing. Defaults to `WCAG2AAA`, but can also be `Section508`, `WCAG2A`, or `WCAG2AA`.
-    - CONTINUA11Y: The location where `continua11y` is running. The main site is `continua11y.herokuapp.com`, but you can change this for testing purposes or whatever.
+    - CONTINUA11Y: The location where `continua11y` is running. The main site is `continua11y.18f.gov`, but you can change this for testing purposes or whatever.
 
 ## Installation
 

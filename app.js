@@ -57,6 +57,8 @@ app.use(function (req, res) {
     res.render('500.jade');
 });
 
+console.log(process.env.PORT);
+
 models.sequelize.sync({
     force: process.env.FRESHDB || false
 }).then(function () {

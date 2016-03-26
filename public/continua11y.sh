@@ -131,7 +131,7 @@ if [[ -z "$TRAVIS" ]]
 then
     curl -s -X POST http://${CONTINUA11Y}/incoming -H "Content-Type: application/json" -d @results.json -o curl.txt
 else
-    curl -s -X POST https://continua11y.herokuapp.com/incoming -H "Content-Type: application/json" -d @results.json -o curl.txt
+    curl -s -X POST https://continua11y.18f.gov/incoming -H "Content-Type: application/json" -d @results.json -o curl.txt
 fi
 
 # clean up

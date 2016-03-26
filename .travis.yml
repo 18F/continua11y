@@ -28,4 +28,4 @@ env:
     - KILL_SCRIPT="1>/dev/null forever stop app.js"
     - USE_SITEMAP=false
     - PORT=3000
-    - CONTINUA11Y="continua11y.herokuapp.com"
+    - CONTINUA11Y="continua11y.18f.gov"

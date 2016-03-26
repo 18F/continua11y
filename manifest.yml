@@ -1,0 +1,7 @@
+applications:
+- disk_quota: 512M
+  domain: 18f.gov
+  host: continua11y
+  instances: 1
+  memory: 512M
+  name: continua11y

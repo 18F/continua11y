@@ -9,9 +9,9 @@ then
     # TRAVIS_REPO_SLUG must be a valid github repo
     TRAVIS_REPO_SLUG="18F/continua11y"
     # change to whichever script you need to start the web server (make sure to detach so that the script continues)
-    RUN_SCRIPT="1>/dev/null FRESHDB=TRUE forever start --spinSleepTime 1000 --minUptime 3000 app.js"
+    RUN_SCRIPT="FRESHDB=TRUE forever start --spinSleepTime 1000 --minUptime 3000 app.js"
     # shut down the web server so that you can run the script again without conflicts
-    KILL_SCRIPT="1>/dev/null forever stopall"
+    KILL_SCRIPT="forever stopall"
     # the port where the server will run
     PORT=3000
     # if your site generates a sitemap, set this to true to use it instead of spidering
@@ -66,7 +66,7 @@ cd temp
 if ! $USE_SITEMAP;
 then
     echo "${green} >>> ${reset} using wget to mirror site"
-    wget --quiet --mirror --convert-links http://localhost:${PORT}
+    wget --mirror --convert-links http://localhost:${PORT}
 else
     echo "${green} >>> ${reset} using sitemap to mirror relevant portion of site"
     wget --quiet http://localhost:${PORT}/sitemap.xml --no-cache -O - | egrep -o "http://localhost:${PORT}" > sites.txt

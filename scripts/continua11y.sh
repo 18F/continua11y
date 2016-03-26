@@ -9,7 +9,7 @@ then
     # TRAVIS_REPO_SLUG must be a valid github repo
     TRAVIS_REPO_SLUG="18F/continua11y"
     # change to whichever script you need to start the web server (make sure to detach so that the script continues)
-    RUN_SCRIPT="1>/dev/null FRESHDB=TRUE forever start --spinSleepTime 1000 --minUptime 3000 app.js"
+    RUN_SCRIPT="FRESHDB=TRUE forever start --spinSleepTime 1000 --minUptime 3000 app.js"
     # shut down the web server so that you can run the script again without conflicts
     KILL_SCRIPT="1>/dev/null forever stopall"
     # the port where the server will run

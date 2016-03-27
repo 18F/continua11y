@@ -54,8 +54,8 @@ RUNNING="$(curl -s -o /dev/null -w "%{http_code}" http://localhost:${PORT})"
 if [[ $RUNNING == "000" ]]
 then
     echo "${green} >>> ${reset} starting the server"
-    nohup npm start &
-    sleep 5 # sometimes things take time
+    eval $RUN_SCRIPT
+    sleep 15 # sometimes things take time
 else
     echo "${green} >>> ${reset} the server's already running"
 fi

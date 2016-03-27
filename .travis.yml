@@ -15,7 +15,9 @@ addons:
         - libgif-dev
         - build-essential
         - g++
-before_script: psql -c 'create database continua11y_test;' -U postgres
+before_script:
+- psql -c 'create database continua11y_test;' -U postgres
+- psql -c 'create database continua11y;' -U postgres
 script: npm test --coverage
 after_script:
 - codeclimate-test-reporter < coverage/lcov.info

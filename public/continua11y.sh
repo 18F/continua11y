@@ -2,7 +2,7 @@
 
 if [[ -z "$TRAVIS" ]];
 then
-    # local development options; run this script in an unrelated project 
+    # local development options; run this script in an unrelated project
     TRAVIS_PULL_REQUEST=false
     TRAVIS_BRANCH="test"
     TRAVIS_COMMIT="$(echo $RANDOM | md5)"
@@ -23,7 +23,6 @@ else
     # we're on travis, so install the tools needed
     npm install -g pa11y
     npm install -g pa11y-reporter-1.0-json
-    npm install -g html-inline
     # jq is already be installed on travis, but it needs to v1.5 to have --slurpfile
     wget https://github.com/stedolan/jq/releases/download/jq-1.5/jq-linux64 -O /tmp/jq
     chmod +x /tmp/jq
@@ -75,8 +74,8 @@ else
 fi
 echo "${green} <<< ${reset} found $(find . -type f | wc -l | sed 's/^ *//;s/ *$//') files in $(find . -mindepth 1 -type d | wc -l | sed 's/^ *//;s/ *$//') directories"
 
-function relpath() { 
-    python -c 'import sys, os.path; print os.path.relpath(sys.argv[1], sys.argv[2])' "$1" "${2:-$PWD}"; 
+function relpath() {
+    python -c 'import sys, os.path; print os.path.relpath(sys.argv[1], sys.argv[2])' "$1" "${2:-$PWD}";
 }
 
 # iterate through URLs and run runtest on each
@@ -87,24 +86,15 @@ function runtest () {
         echo "${blue} |--------------------------------------- ${reset}"
         echo "${blue} |-> ${reset} analyzing ${URL}"
         pa11y -r 1.0-json -s $STANDARD $URL > pa11y.json
-        
-        # single apostrophes mess up the json command below, so remove them
-        # sed -n "s/'//g" pa11y.json
-
-        # compress external resources into the html and convert to json
-        html-inline -i $file -o site.html
-        # himalaya site.html site.json
-        openssl enc -aes128 -a -A -in site.html -out site.txt -k continua11y
-        echo "{\"html\":\"$(cat site.txt)\"}" > site.txt
 
         # add this report into results.json
-        jq -n --slurpfile a pa11y.json --slurpfile b site.txt --slurpfile c ../results.json '$c | .[] * {data: {"'"${URL}"'": ({pa11y: $a | .[]} + {html: $b | .[].html})}}' > ../temp.json
+        jq -n --slurpfile a pa11y.json --slurpfile b ../results.json '$b | .[] * {data: {"'"${URL}"'": ($a | .[]) }}' > ../temp.json
         cp ../temp.json ../results.json
         ERROR="$(cat pa11y.json | jq .count.error)"
         WARNING="$(cat pa11y.json | jq .count.warning)"
         NOTICE="$(cat pa11y.json | jq .count.notice)"
         echo "${green} <<< ${reset} pa11y says: ${red}error:${reset} ${ERROR} | ${yellow}warning:${reset} ${WARNING} | ${green}notice:${reset} ${NOTICE}"
-        rm pa11y.json site.html site.txt
+        rm pa11y.json
     else
         echo "${blue} ||  ${reset} ${URL} is not an html document, skipping"
     fi
@@ -136,4 +126,4 @@ fi
 
 # clean up
 echo "${green} >>> ${reset} cleaning up"
-rm -rf temp temp.json curl.txt results.json 
+rm -rf temp temp.json curl.txt results.json

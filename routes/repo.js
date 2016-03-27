@@ -4,7 +4,9 @@ var async = require('async');
 exports.get = function (req, res){
     models.Repo.findOne({
         where: {
-            repoName: req.params.account+'/'+req.params.repo,
+            repoName: {
+              $iLike: req.params.account+'/'+req.params.repo
+            }
         },
         order: [['createdAt', 'DESC']]
     }).then(function (repo) {
@@ -28,9 +30,9 @@ exports.get = function (req, res){
                     },
                     function (callback) {
                         res.render('repo', {
-                            results: commits, 
-                            repo: req.params.account + '/' + req.params.repo, 
-                            branches: branches, 
+                            results: commits,
+                            repo: repo.repoName,
+                            branches: branches,
                             default_branch: defaultBranch});
                         callback(null);
                     }

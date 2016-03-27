@@ -1,3 +1,2 @@
-https://github.com/mojodna/heroku-buildpack-cairo
 https://github.com/stomita/heroku-buildpack-phantomjs
-https://github.com/heroku/heroku-buildpack-nodejs
+https://github.com/cloudfoundry/heroku-buildpack-nodejs

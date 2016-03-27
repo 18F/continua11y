@@ -1,5 +1,9 @@
 var express = require('express');
 var bodyParser = require('body-parser');
+require('dotenv').config();
+var cfenv = require('cfenv');
+
+var appEnv = cfenv.getAppEnv();
 
 // database stuff
 var seed = require('./lib/seed.js');
@@ -30,6 +34,11 @@ var enableCORS = function(req, res, next) {
         next();
     }
 };
+
+if (!process.env.GITHUB_TOKEN && !appEnv.getServiceCreds('continua11y-cups').GITHUB_TOKEN) {
+    console.log('GITHUB_TOKEN not set in environment');
+    process.exit(1);
+}
 
 app.use(enableCORS);
 

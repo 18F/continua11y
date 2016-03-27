@@ -1,0 +1,11 @@
+applications:
+- disk_quota: 512M
+  domain: 18f.gov
+  host: continua11y
+  instances: 1
+  memory: 512M
+  name: continua11y
+  buildpack: https://github.com/ddollar/heroku-buildpack-multi
+  services:
+  - continua11y-db
+  - continua11y-cups

@@ -1,6 +1,9 @@
 var models = require('../models');
 var request = require('request');
 var reporter = require('../lib/reporter.js');
+var cfenv = require('cfenv');
+
+var appEnv = cfenv.getAppEnv();
 
 exports.index = function (req, res){
     models.Repo.findAll({
@@ -16,6 +19,7 @@ exports.instructions = function (req, res){
 };
 
 exports.incoming = function (req, res){
+    var GITHUB_TOKEN = process.env.GITHUB_TOKEN || appEnv.getServiceCreds('continua11y-cups').GITHUB_TOKEN;
 
     res.send('ok');
     console.log('received new report for '+req.body.repository);
@@ -23,7 +27,7 @@ exports.incoming = function (req, res){
         uri: 'https://api.github.com/repos/'+req.body.repository,
         headers: {
             'User-Agent': 'continua11y',
-            'Authorization': 'token '+process.env.GITHUB_TOKEN
+            'Authorization': 'token '+GITHUB_TOKEN
         }
     }, function (err, res, body){
         body = JSON.parse(body);

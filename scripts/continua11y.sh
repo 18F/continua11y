@@ -128,3 +128,5 @@ fi
 # clean up
 echo "${green} >>> ${reset} cleaning up"
 rm -rf temp temp.json curl.txt results.json
+
+cat nohup.out

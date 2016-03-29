@@ -23,8 +23,8 @@ after_script:
 - codeclimate-test-reporter < coverage/lcov.info
 - npm install -g pa11y-crawl
 - npm start &
-- sleep 10
-- ./continua11y.sh --ci http:localhost:3000
+- sleep 5
+- ./scripts/continua11y.sh --ci http:localhost:3000
 notifications:
     email: false
 env:

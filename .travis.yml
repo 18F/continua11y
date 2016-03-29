@@ -24,7 +24,7 @@ after_script:
 - npm install -g pa11y-crawl
 - npm start &
 - sleep 5
-- ./scripts/continua11y.sh --ci http:localhost:3000
+- pa11y-crawl --ci http://localhost:3000
 notifications:
     email: false
 env:

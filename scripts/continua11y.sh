@@ -1,7 +1,5 @@
 #! /usr/bin/env bash
 
-#! /usr/bin/env bash
-
 red=`tput setaf 1`
 green=`tput setaf 2`
 yellow=`tput setaf 3`
@@ -182,7 +180,7 @@ fi
 echo "${green} <<< ${reset} found $(find . -type f | wc -l | sed 's/^ *//;s/ *$//') files in $(find . -mindepth 1 -type d | wc -l | sed 's/^ *//;s/ *$//') directories"
 
 function relpath() {
-    python3 -c 'import sys, os.path; print(os.path.relpath(sys.argv[1], sys.argv[2]))' "$1" "${2:-$PWD}";
+    python -c 'import sys, os.path; print os.path.relpath(sys.argv[1], sys.argv[2])' "$1" "${2:-$PWD}";
 }
 
 # iterate through URLs and run runtest on each

@@ -21,7 +21,9 @@ before_script:
 script: npm test --coverage
 after_script:
 - codeclimate-test-reporter < coverage/lcov.info
-- ./scripts/continua11y.sh
+- npm install -g pa11y-crawl
+- nohup npm start &
+- pa11y-crawl --ci http:localhost:3000
 notifications:
     email: false
 env:

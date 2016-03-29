@@ -24,6 +24,7 @@ after_script:
 - npm install -g pa11y-crawl
 - npm start &
 - sleep 5
+- pyenv global 3.4.0
 - pa11y-crawl --ci http://localhost:3000
 notifications:
     email: false

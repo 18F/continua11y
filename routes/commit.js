@@ -1,3 +1,5 @@
+'use strict';
+
 var models = require('../models');
 
 exports.get = function (req, res){

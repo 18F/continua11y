@@ -1,3 +1,5 @@
+'use strict';
+
 var badge = require('gh-badges');
 var models = require('../models');
 
@@ -19,7 +21,9 @@ exports.make = function (req, res){
                 var summary;
                 var color;
                 if (commit === null){
-                    badge({ text: [ 'accessible', 'unknown' ], colorscheme: 'lightgrey', template: 'flat' },
+                    badge({
+                      text: [ 'accessible', 'unknown' ], colorscheme: 'lightgrey', template: 'flat'
+                    },
                         function(svg, err) {
                             res.set('Content-Type', 'image/svg+xml;charset=utf-8');
                             res.send(svg);
@@ -36,7 +40,9 @@ exports.make = function (req, res){
                         summary = count+' errors';
                         color = 'brightgreen';
                     }
-                    badge({ text: [ 'accessibility', summary ], colorscheme: color, template: 'flat' },
+                    badge({
+                      text: [ 'accessibility', summary ], colorscheme: color, template: 'flat'
+                    },
                         function(svg, err) {
                             res.set('Content-Type', 'image/svg+xml;charset=utf-8');
                             res.send(svg);

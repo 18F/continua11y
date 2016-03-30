@@ -1,3 +1,5 @@
+'use strict';
+
 var models = require('../models');
 var request = require('request');
 var reporter = require('../lib/reporter.js');
@@ -7,10 +9,10 @@ var appEnv = cfenv.getAppEnv();
 
 exports.index = function (req, res){
     models.Repo.findAll({
-        order: [["updatedAt", "DESC"]],
+        order: [['updatedAt', 'DESC']],
         limit: 20
     }).then(function (repos) {
-        res.render("index", {repos: repos});
+        res.render('index', {repos: repos});
     });
 };
 

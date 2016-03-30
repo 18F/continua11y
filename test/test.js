@@ -1,3 +1,5 @@
+'use strict';
+
 var assert = require('chai').assert;
 // var should = require('chai').should();
 var seed = require('../lib/seed.js');

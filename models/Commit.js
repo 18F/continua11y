@@ -1,3 +1,5 @@
+'use strict';
+
 module.exports = function(sequelize, DataTypes) {
     var Commit = sequelize.define('Commit', {
         branch: {

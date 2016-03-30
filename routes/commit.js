@@ -7,7 +7,6 @@ exports.get = function (req, res){
         },
         order: [['updatedAt', 'DESC']]
     }).then(function (commit) {
-        console.log(commit);
         models.Url.findAll({
             where: {
                 repo: commit.repo,

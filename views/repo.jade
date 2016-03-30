@@ -48,7 +48,6 @@ block script
             $("img.badge-img").hide();
             $(".pr-true").hide();
             var branches = "#{branches}".split(",");
-            console.log(branches);
             if ($.inArray("#{default_branch}", branches) > -1) {
                 $("tr.#{default_branch}.pr-false").show();
                 $("img.#{default_branch}").show();

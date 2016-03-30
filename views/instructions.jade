@@ -5,23 +5,17 @@ block title
 
 block content
     h1 How this works
-    p
-        | Every time you make a commit in your GitHub repository, continua11y
-        | will find all of the pages on your site and run <code>pa11y</code>
-        | on each of them. Then, we save that result and generate a badge that
-        | you can use to show off your progress.
+    p.
+      Every time you make a commit in your GitHub repository, continua11y
+      will find all of the pages on your site and run <code>pa11y</code>
+      on each of them. Then, we save that result and generate a badge that
+      you can use to show off your progress.
     h1 Set it up
-    p
-        | The best way to use continua11y is to add it as part of a continuous
-        | integration service like <a href="https://travis-ci.org">Travis CI</a>.
-    p First, copy the <code>continua11y.sh</code> script into your project.
-    p Add <code>after_script: ./path/to/continua11y.sh</code> to your <code>.travis.yml</code> file.
-    p Finally, add a few environmental variables to <code>.travis.yml</code>:
-        ul
-            li <code>RUN_SCRIPT</code>: The command for serving your site. Make sure that the server detaches so that the script continues to run
-            li <code>KILL_SCRIPT</code>: The command to stop serving. This is optional, but helps for local development.
-            li <code>USE_SITEMAP</code>: If your site has a sitemap.xml file, set to true to use that instead of the spider.
-            li <code>PORT</code>: The port on localhost where your served site is found.
-            li <code>STANDARD</code>: The accessibility standard used for testing. Defaults to <code>WCAG2AAA</code>, but can also be <code>Section508</code>, <code>WCAG2A</code>, or <code>WCAG2AA</code>.
-            li <code>CONTINUA11Y</code>: The location where continua11y is running. The main site is continua11y.18f.gov, but you can change this for testing purposes or whatever.
-
+    p The best way to use continua11y is to add it as part of a continuous integration service like <a href="https://travis-ci.org">Travis CI</a>.
+    p In your project's <code>.travis.yml</code> file, do something like:
+    pre.
+        after_script:
+        - npm install -g pa11y-crawl
+        - pa11y-crawl --ci http://localhost:PORT
+    p 
+      | See the #[a(href='https://github.com/18f/pa11y-crawl') pa11y-crawl project] for more information on setting up the command.

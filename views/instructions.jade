@@ -11,11 +11,10 @@ block content
       on each of them. Then, we save that result and generate a badge that
       you can use to show off your progress.
     h1 Set it up
-    p The best way to use continua11y is to add it as part of a continuous integration service like <a href="https://travis-ci.org">Travis CI</a>.
+    p The best way to use continua11y is to add it as part of a continuous integration service like #[a(href='https://travis-ci.org') Travis CI].
     p In your project's <code>.travis.yml</code> file, do something like:
     pre.
         after_script:
         - npm install -g pa11y-crawl
         - pa11y-crawl --ci http://localhost:PORT
-    p 
-      | See the #[a(href='https://github.com/18f/pa11y-crawl') pa11y-crawl project] for more information on setting up the command.
+    p See the #[a(href='https://github.com/18f/pa11y-crawl') pa11y-crawl project] for more information on setting up the command.

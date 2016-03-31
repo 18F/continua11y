@@ -21,16 +21,12 @@ before_script:
 script: npm test --coverage
 after_script:
 - codeclimate-test-reporter < coverage/lcov.info
-- ./scripts/continua11y.sh
+- npm install -g pa11y-crawl
+- pa11y-crawl --run "npm start" --ci http:localhost:3000
 notifications:
     email: false
 env:
     global:
-    - RUN_SCRIPT="1>/dev/null FRESHDB=TRUE forever start --spinSleepTime 5000 --minUptime 5000 app.js"
-    - KILL_SCRIPT="1>/dev/null forever stop app.js"
-    - USE_SITEMAP=false
-    - PORT=3000
-    - CONTINUA11Y="continua11y.18f.gov"
     - GITHUB_TOKEN=FAKE_TEST_TOKEN
     - CF_USERNAME=18f-acq_deployer
     - secure: "lgJhmljgx5JWK8/WZNkyF5tkSg9AMWhjiglHp/TQaCymVDED68ZsiHD1PxXpY2364uluTYxhb5yBsjwNV1Ss0V7MGd5WIOxY6kDCC6Kt+p3iEs7uBxkUWcsutW76n1sRziAEKIW0KOseikPN4WO1RGuuR2XPRNIb9pNXDhqeQ/s="

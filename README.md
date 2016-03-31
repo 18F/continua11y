@@ -7,6 +7,15 @@
 
 A continuous integration service using [pa11y](https://github.com/nature/pa11y), a web accessibility tool. It provides a script for generating accessibility statistics for all pages on a site, which is designed to run within a testing environment like Travis CI (though it can run anywhere). It then stores the results of scans in a Postgres database and produces a badge with the result that can be used as an image on any website.
 
+## Contributing
+
+See [CONTRIBUTING](CONTRIBUTING.md) for additional information.
+
+### Branch flow
+
+- Main branch: `release`
+- Development branch: `develop`
+
 ## Usage
 
 Run `continua11y.sh` as part of your [Travis CI](https://travis-ci.org/) suite of tests.
@@ -28,3 +37,11 @@ Run `continua11y.sh` as part of your [Travis CI](https://travis-ci.org/) suite o
     node app.js # or foreman start
 
 You may run into trouble installing the `gh-badges` package. Check [that project](https://github.com/badges/shields/blob/master/INSTALL.md#requirements) for more in-depth information.
+
+## Public domain
+
+This project is in the worldwide [public domain](LICENSE.md). As stated in [CONTRIBUTING](CONTRIBUTING.md):
+
+> This project is in the public domain within the United States, and copyright and related rights in the work worldwide are waived through the [CC0 1.0 Universal public domain dedication](https://creativecommons.org/publicdomain/zero/1.0/).
+>
+> All contributions to this project will be released under the CC0 dedication. By submitting a pull request, you are agreeing to comply with this waiver of copyright interest.

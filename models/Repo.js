@@ -1,5 +1,7 @@
+'use strict';
+
 module.exports = function(sequelize, DataTypes) {
-    var Repo = sequelize.define("Repo", {
+    var Repo = sequelize.define('Repo', {
         repo: {
             type: DataTypes.INTEGER,
             unique: true

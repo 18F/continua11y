@@ -1,11 +1,14 @@
+'use strict';
+
 var models = require('../models');
 var async = require('async');
 
 exports.get = function (req, res){
+    var reqRepo = req.params.repo.replace('.html','');
     models.Repo.findOne({
         where: {
             repoName: {
-              $iLike: req.params.account+'/'+req.params.repo
+              $iLike: req.params.account+'/'+reqRepo
             }
         },
         order: [['createdAt', 'DESC']]

@@ -33,6 +33,8 @@ Run `continua11y.sh` as part of your [Travis CI](https://travis-ci.org/) suite o
 
 ## Installation
 
+continua11y requires the `cairo` package to run the `canvas` module. See instructions at [https://github.com/Automattic/node-canvas/wiki](https://github.com/Automattic/node-canvas/wiki) for details of how to install on your system.
+
     npm install
     node app.js # or foreman start
 

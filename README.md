@@ -38,6 +38,18 @@ Run `continua11y.sh` as part of your [Travis CI](https://travis-ci.org/) suite o
 
 You may run into trouble installing the `gh-badges` package. Check [that project](https://github.com/badges/shields/blob/master/INSTALL.md#requirements) for more in-depth information.
 
+## Database
+
+Database is postgres and you need to create these databases outside the
+application scripts:
+
+    createdb continua11y_test # for test env
+    createdb continua11y # for test development and other envs
+
+Seeding the database can be done with a handy script:
+
+    node scripts/seed-db.js
+
 ## Public domain
 
 This project is in the worldwide [public domain](LICENSE.md). As stated in [CONTRIBUTING](CONTRIBUTING.md):

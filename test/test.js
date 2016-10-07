@@ -1,49 +1,8 @@
 'use strict';
 
-var assert = require('chai').assert;
-// var should = require('chai').should();
-var seed = require('../lib/seed.js');
-var reporter = require('../lib/reporter.js');
-var models = require('../models');
-
-// use npm test --coverage to check test coverage
-
-describe('Database', function() {
-    before(function (done) {
-        models.sequelize.sync({
-            force: true
-        }).then(function () {
-            seed();
-            setTimeout(function () {
-                done();
-            }, 1500);
-        });
-    });
-    it('created 2 repos in test database', function (done) {
-        models.Repo.findAll().then(function (repos) {
-            assert.equal(repos.length, 2);
-            done();
-        }).catch(function (err) {
-            done(err);
-        });
-    });
-    it('created 4 commits in test database', function (done) {
-        models.Commit.findAll().then(function (commits) {
-            assert.equal(commits.length, 4);
-            done();
-        }).catch(function (err) {
-            done(err);
-        });
-    });
-    it('created 12 urls in test database', function (done) {
-        models.Url.findAll().then(function (urls) {
-            assert.equal(urls.length, 12);
-            done();
-        }).catch(function (err) {
-            done(err);
-        });
-    });
-});
+var assert    = require('chai').assert;
+var reporter  = require('../lib/reporter');
+var models    = require('../models');
 
 describe('Reporter tests', function () {
     describe('Receive report from new repo', function () {

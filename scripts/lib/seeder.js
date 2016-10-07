@@ -2,7 +2,7 @@
 
 // seeds the database with some sample data
 
-var models = require('../../models');
+var models = require('../../models/persistence');
 
 var seed = function () {
     models.Repo.create({

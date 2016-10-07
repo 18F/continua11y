@@ -1,7 +1,7 @@
 'use strict';
 
 var badge = require('gh-badges');
-var models = require('../models');
+var models = require('../models/persistence');
 
 exports.make = function (req, res){
     models.Repo.findOne({

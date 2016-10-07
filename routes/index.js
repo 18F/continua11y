@@ -1,6 +1,6 @@
 'use strict';
 
-var models = require('../models');
+var models = require('../models/persistence');
 var request = require('request');
 var reporter = require('../lib/reporter.js');
 var cfenv = require('cfenv');

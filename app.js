@@ -8,7 +8,7 @@ var cfenv = require('cfenv');
 var appEnv = cfenv.getAppEnv();
 
 // database stuff
-var models = require('./models');
+var models = require('./models/persistence');
 
 // router middleware stuff
 var routes = require('./routes');

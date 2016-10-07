@@ -1,6 +1,6 @@
 'use strict';
 
-var models = require('../models');
+var models = require('../models/persistence');
 
 exports.get = function (req, res){
     models.Repo.findOne({

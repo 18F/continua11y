@@ -2,7 +2,7 @@
 
 var assert    = require('assert');
 var seed      = require('../scripts/lib/seeder');
-var models    = require('../models');
+var models    = require('../models/persistence');
 
 describe('Seeding', function() {
     beforeEach(function (done) {

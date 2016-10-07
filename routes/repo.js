@@ -1,6 +1,6 @@
 'use strict';
 
-var models = require('../models');
+var models = require('../models/persistence');
 var async = require('async');
 
 exports.get = function (req, res){

@@ -4,8 +4,8 @@ const async     = require('async');
 const parse     = require('url-parse');
 const request   = require('request');
 
+const dbInterface = require('./persistence/interface');
 const ReportSum        = require('./report_sum');
-const ParseAttributes  = require('./parse_attributes');
 const models           = require('./persistence');
 
 module.exports = function storeStats(serviceData, done) {
@@ -17,17 +17,17 @@ module.exports = function storeStats(serviceData, done) {
     return function saveThisUrl(next) {
       let parsedUrl = parse(url, true);
       let count     = serviceData.travis.data[url].count;
-      module.exports.saveUrl(serviceData, count, parsedUrl, next);
+      dbInterface.createUrlRecord(serviceData, count, parsedUrl, next);
     }
   });
 
   databaseSaves.push((next) => {
-    module.exports.saveCommit(serviceData, sums, next);
+    dbInterface.updateCommitRecord(serviceData, sums, next);
   });
 
   databaseSaves.push((next) => {
     if (serviceData.travis.pull_request === 'false') {
-      module.exports.saveRepo(serviceData, sums, next);
+      dbInterface.upsertRepoRecord(serviceData, sums, next);
     }
   });
 
@@ -37,30 +37,6 @@ module.exports = function storeStats(serviceData, done) {
 
   async.parallel(databaseSaves, done);
 }
-
-module.exports.saveUrl = function saveUrl(serviceData, count, url, next) {
-  let attributes = new ParseAttributes(serviceData, count, url).forUrl();
-
-  models.Url
-    .create(attributes)
-    .then(function() { next(); });
-};
-
-module.exports.saveCommit = function saveCommit(serviceData, count, done) {
-  let parser = new ParseAttributes(serviceData, count);
-
-  models.Commit
-    .update(parser.forCommit(), {where: {commit: parser.commitIdentifier()}})
-    .then(() => { done() });
-};
-
-module.exports.saveRepo = function saveRepo(serviceData, count, done) {
-  let attributes = new ParseAttributes(serviceData, count).forRepo();
-
-  models.Repo
-    .upsert(attributes)
-    .then(() => { done(); });
-};
 
 module.exports.tellGitHub = function tellGitHub(serviceData, count, done) {
   var context = '';

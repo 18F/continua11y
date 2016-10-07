@@ -1,10 +1,22 @@
 'use strict';
 
 var assert    = require('assert');
+var seed      = require('../scripts/lib/seeder');
 var reporter  = require('../lib/reporter');
 var models    = require('../models');
 
 describe('Reporter tests', function () {
+  before(function (done) {
+      models.sequelize.sync({
+          force: true
+      }).then(function () {
+          seed();
+          setTimeout(function () {
+              done();
+          }, 1500);
+      });
+  });
+
     describe('Receive report from new repo', function () {
         before(function (done) {
             reporter.start({

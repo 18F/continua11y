@@ -5,7 +5,7 @@ var seed      = require('../scripts/lib/seeder');
 var models    = require('../models');
 
 describe('Seeding', function() {
-    before(function (done) {
+    beforeEach(function (done) {
         models.sequelize.sync({
             force: true
         }).then(function () {

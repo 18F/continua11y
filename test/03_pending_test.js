@@ -1,8 +1,6 @@
 'use strict';
 
-var assert    = require('chai').assert;
-var reporter  = require('../lib/reporter');
-var models    = require('../models');
+var assert    = require('assert');
 
 describe('Route tests', function () {
     it('serves a home page with recent tests');

@@ -1,6 +1,6 @@
 'use strict';
 
-var assert    = require('chai').assert;
+var assert    = require('assert');
 var reporter  = require('../lib/reporter');
 var models    = require('../models');
 

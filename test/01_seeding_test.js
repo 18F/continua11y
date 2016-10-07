@@ -1,6 +1,6 @@
 'use strict';
 
-var assert    = require('chai').assert;
+var assert    = require('assert');
 var seed      = require('../scripts/lib/seeder');
 var models    = require('../models');
 

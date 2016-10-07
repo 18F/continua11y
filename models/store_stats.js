@@ -4,8 +4,9 @@ const async     = require('async');
 const parse     = require('url-parse');
 const request   = require('request');
 
-const ReportSum = require('./report_sum');
-const models    = require('./persistence');
+const ReportSum        = require('./report_sum');
+const ParseAttributes  = require('./parse_attributes');
+const models           = require('./persistence');
 
 module.exports = function storeStats(serviceData, done) {
   done = done || function () {};
@@ -15,8 +16,8 @@ module.exports = function storeStats(serviceData, done) {
   let databaseSaves = Object.keys(serviceData.travis.data).map((url) => {
     return function saveThisUrl(next) {
       let parsedUrl = parse(url, true);
-      let stats = serviceData.travis.data[url];
-      module.exports.saveUrl(serviceData, stats, parsedUrl, next);
+      let count     = serviceData.travis.data[url].count;
+      module.exports.saveUrl(serviceData, count, parsedUrl, next);
     }
   });
 
@@ -37,50 +38,31 @@ module.exports = function storeStats(serviceData, done) {
   async.parallel(databaseSaves, done);
 }
 
-module.exports.saveUrl = function saveUrl(serviceData, data, url, next) {
+module.exports.saveUrl = function saveUrl(serviceData, count, url, next) {
+  let attributes = new ParseAttributes(serviceData, count, url).forUrl();
+
   models.Url
-    .create({
-      path:     url.pathname,
-      commit:   serviceData.travis.commit,
-      repo:     serviceData.github.id,
-      total:    data.count.total,
-      error:    data.count.error,
-      warning:  data.count.warning,
-      notice:   data.count.notice
-    })
+    .create(attributes)
     .then(function() { next(); });
 };
 
-module.exports.saveCommit = function saveCommit(serviceData, overall, done) {
+module.exports.saveCommit = function saveCommit(serviceData, count, done) {
+  let parser = new ParseAttributes(serviceData, count);
+
   models.Commit
-    .update({
-        total: overall.total,
-        error: overall.error,
-        warning: overall.warning,
-        notice: overall.notice,
-        latest: true
-      },{
-        where: {
-          commit: serviceData.travis.commit
-        }
-      })
+    .update(parser.forCommit(), {where: {commit: parser.commitIdentifier()}})
     .then(() => { done() });
 };
 
-module.exports.saveRepo = function saveRepo(serviceData, overall, done) {
-  models.Repo.upsert({
-    repo: serviceData.github.id,
-    repoName: serviceData.travis.repository,
-    defaultBranch: serviceData.github.default_branch,
-    total: overall.total,
-    error: overall.error,
-    warning: overall.warning,
-    notice: overall.notice
-  })
-  .then(() => { done(); });
+module.exports.saveRepo = function saveRepo(serviceData, count, done) {
+  let attributes = new ParseAttributes(serviceData, count).forRepo();
+
+  models.Repo
+    .upsert(attributes)
+    .then(() => { done(); });
 };
 
-module.exports.tellGitHub = function tellGitHub(serviceData, overall, done) {
+module.exports.tellGitHub = function tellGitHub(serviceData, count, done) {
   var context = '';
   var message = '';
   var state = '';
@@ -97,7 +79,7 @@ module.exports.tellGitHub = function tellGitHub(serviceData, overall, done) {
       shortCommit: firstCommit
     }
   }).then(function (commit) {
-    var change = commit.error - overall.error;
+    var change = commit.error - count.error;
     if (change >= 0){
       message = change+' fewer accessibility errors';
       state = 'success';

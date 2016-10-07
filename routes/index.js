@@ -2,7 +2,7 @@
 
 var models = require('../models/persistence');
 var request = require('request');
-var reporter = require('../lib/reporter.js');
+var reporter = require('../models/reporter.js');
 var cfenv = require('cfenv');
 
 var appEnv = cfenv.getAppEnv();

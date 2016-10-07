@@ -5,9 +5,12 @@ const parse     = require('url-parse');
 const request   = require('request');
 
 const ReportSum = require('./report_sum');
-const models    = require('../models/persistence');
+const models    = require('./persistence');
 
-module.exports = function store_calculations(githubData, travisData, done) {
+module.exports = function storeStats(githubData, travisData, done) {
+  console.log('githubData', githubData);
+  console.log('travisData', travisData);
+
   done = done || function () {};
 
   let sums = new ReportSum(travisData.data).calculate();

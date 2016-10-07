@@ -1,7 +1,7 @@
 'use strict';
 
 const assert    = require('assert');
-const ReportSum = require('../lib/report_sum');
+const ReportSum = require('../models/report_sum');
 
 describe('ReportSum', () => {
   let data;

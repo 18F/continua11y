@@ -1,10 +1,6 @@
 'use strict';
 
-var async = require('async');
-var parse = require('url-parse');
-var request = require('request');
 var models = require('../models/persistence');
-var ReportSum = require('./report_sum');
 var store_calculations = require('./store_calculations');
 
 var Reporter = {

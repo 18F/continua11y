@@ -2,7 +2,7 @@
 
 var assert    = require('assert');
 var seed      = require('../scripts/lib/seeder');
-var reporter  = require('../lib/reporter');
+var reporter  = require('../models/reporter');
 var models    = require('../models/persistence');
 
 describe('Reporter tests', function () {

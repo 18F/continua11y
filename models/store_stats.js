@@ -7,55 +7,51 @@ const request   = require('request');
 const ReportSum = require('./report_sum');
 const models    = require('./persistence');
 
-module.exports = function storeStats(githubData, travisData, done) {
-  console.log('githubData', githubData);
-  console.log('travisData', travisData);
-
+module.exports = function storeStats(serviceData, done) {
   done = done || function () {};
 
-  let sums = new ReportSum(travisData.data).calculate();
+  let sums = new ReportSum(serviceData.travis.data).calculate();
 
-  let databaseSaves = Object.keys(travisData.data).map((url) => {
-
+  let databaseSaves = Object.keys(serviceData.travis.data).map((url) => {
     return function saveThisUrl(next) {
       let parsedUrl = parse(url, true);
-      let data = travisData.data[url];
-      module.exports.saveUrl(githubData, travisData, data, parsedUrl, next);
+      let stats = serviceData.travis.data[url];
+      module.exports.saveUrl(serviceData, stats, parsedUrl, next);
     }
   });
 
   databaseSaves.push((next) => {
-    module.exports.saveCommit(githubData, travisData, sums, next);
+    module.exports.saveCommit(serviceData, sums, next);
   });
 
   databaseSaves.push((next) => {
-    if (travisData.pull_request === 'false') {
-      module.exports.saveRepo(githubData, travisData, sums, next);
+    if (serviceData.travis.pull_request === 'false') {
+      module.exports.saveRepo(serviceData, sums, next);
     }
   });
 
   databaseSaves.push((next) => {
-    module.exports.tellGitHub(githubData, travisData, sums, next);
+    module.exports.tellGitHub(serviceData, sums, next);
   });
 
   async.parallel(databaseSaves, done);
 }
 
-module.exports.saveUrl = function saveUrl(githubData, travisData, data, url, next) {
+module.exports.saveUrl = function saveUrl(serviceData, data, url, next) {
   models.Url
     .create({
-      path: url.pathname,
-      commit: travisData.commit,
-      repo: githubData.id,
-      total: data.count.total,
-      error: data.count.error,
-      warning: data.count.warning,
-      notice: data.count.notice
+      path:     url.pathname,
+      commit:   serviceData.travis.commit,
+      repo:     serviceData.github.id,
+      total:    data.count.total,
+      error:    data.count.error,
+      warning:  data.count.warning,
+      notice:   data.count.notice
     })
     .then(function() { next(); });
 };
 
-module.exports.saveCommit = function saveCommit(githubData, travisData, overall, done) {
+module.exports.saveCommit = function saveCommit(serviceData, overall, done) {
   models.Commit
     .update({
         total: overall.total,
@@ -65,17 +61,17 @@ module.exports.saveCommit = function saveCommit(githubData, travisData, overall,
         latest: true
       },{
         where: {
-          commit: travisData.commit
+          commit: serviceData.travis.commit
         }
       })
     .then(() => { done() });
 };
 
-module.exports.saveRepo = function saveRepo(githubData, travisData, overall, done) {
+module.exports.saveRepo = function saveRepo(serviceData, overall, done) {
   models.Repo.upsert({
-    repo: githubData.id,
-    repoName: travisData.repository,
-    defaultBranch: githubData.default_branch,
+    repo: serviceData.github.id,
+    repoName: serviceData.travis.repository,
+    defaultBranch: serviceData.github.default_branch,
     total: overall.total,
     error: overall.error,
     warning: overall.warning,
@@ -84,20 +80,20 @@ module.exports.saveRepo = function saveRepo(githubData, travisData, overall, don
   .then(() => { done(); });
 };
 
-module.exports.tellGitHub = function tellGitHub(githubData, travisData, overall, done) {
+module.exports.tellGitHub = function tellGitHub(serviceData, overall, done) {
   var context = '';
   var message = '';
   var state = '';
-  if (travisData.pull_request === 'false'){
+  if (serviceData.travis.pull_request === 'false'){
     context = "continuous-integration/continua11y/push";
   } else {
     context = "continuous-integration/continua11y/pull";
   }
-  var firstCommit = travisData.commit.slice(0,6);
-  // var lastCommit = travisData.commit.slice(15,21);
+  var firstCommit = serviceData.travis.commit.slice(0,6);
+  // var lastCommit = serviceData.travis.commit.slice(15,21);
   models.Commit.findOne({
     where: {
-      repo: githubData.id,
+      repo: serviceData.github.id,
       shortCommit: firstCommit
     }
   }).then(function (commit) {
@@ -111,7 +107,7 @@ module.exports.tellGitHub = function tellGitHub(githubData, travisData, overall,
       state = 'failure';
     }
     request.post({
-      uri: 'https://api.github.com/repos/'+travisData.repository+'/statuses/'+travisData.commit,
+      uri: 'https://api.github.com/repos/'+serviceData.travis.repository+'/statuses/'+serviceData.travis.commit,
       headers: {
         'User-Agent': 'continua11y',
         'Authorization': 'token '+process.env.GITHUB_TOKEN
@@ -119,7 +115,7 @@ module.exports.tellGitHub = function tellGitHub(githubData, travisData, overall,
       json: true,
       body: {
         'state': state,
-        'target_url': 'https://continua11y.18f.gov/'+travisData.repository+'/'+travisData.commit,
+        'target_url': 'https://continua11y.18f.gov/'+serviceData.travis.repository+'/'+serviceData.travis.commit,
         'description': message,
         'context': context
       }

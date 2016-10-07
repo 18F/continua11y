@@ -1,7 +1,7 @@
 'use strict';
 
 var models = require('../models/persistence');
-var store_calculations = require('./store_calculations');
+var storeStats = require('./store_stats');
 
 var Reporter = {
 
@@ -38,7 +38,7 @@ var Reporter = {
             branch: travisData.branch,
           }
         }).then(function () {
-          store_calculations(githubData, travisData);
+          storeStats({github: githubData, travis: travisData});
         });
       });
     });

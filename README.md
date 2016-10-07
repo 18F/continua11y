@@ -33,6 +33,7 @@ Run `continua11y.sh` as part of your [Travis CI](https://travis-ci.org/) suite o
 
 ## Installation
 
+    cp .env.sample .env
     npm install
     node app.js # or foreman start
 

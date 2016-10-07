@@ -8,7 +8,6 @@ var cfenv = require('cfenv');
 var appEnv = cfenv.getAppEnv();
 
 // database stuff
-var seed = require('./lib/seed.js');
 var models = require('./models');
 
 // router middleware stuff
@@ -69,13 +68,9 @@ app.use(function (req, res) {
     res.render('500.jade');
 });
 
-models.sequelize.sync({
-    force: process.env.FRESHDB || false
-}).then(function () {
-    if (process.env.FRESHDB === 'TRUE') {
-        console.log('creating a fresh database');
-        seed();
-    }
+models.sequelize
+  .sync({force: false})
+  .then(function () {
     var server = app.listen(process.env.PORT || 3000, function() {
 
         var host = server.address().address;
@@ -83,4 +78,4 @@ models.sequelize.sync({
 
         console.log('Listening at http://%s:%s', host, port);
     });
-});
+  });

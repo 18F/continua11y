@@ -38,6 +38,18 @@ Run `continua11y.sh` as part of your [Travis CI](https://travis-ci.org/) suite o
 
 You may run into trouble installing the `gh-badges` package. Check [that project](https://github.com/badges/shields/blob/master/INSTALL.md#requirements) for more in-depth information.
 
+### Docker setup
+
+Optionally, you can use Docker (and docker-compose) to run the server locally. Once you have Docker and docker-compose installed, run:
+
+```
+docker-compose up
+```
+
+If you're on a Mac, you can get the IP address of the local server by running `docker-machine ip`.
+
+Then `open http://$(docker-machine ip):3000` (or visit `localhost:3000` if you're on Linux.).
+
 ## Public domain
 
 This project is in the worldwide [public domain](LICENSE.md). As stated in [CONTRIBUTING](CONTRIBUTING.md):

@@ -1,0 +1,19 @@
+postgres:
+   image: postgres:9
+   environment:
+     - POSTGRES_USER=continua11y
+     - POSTGRES_PASSWORD=password
+   ports:
+     - "5432:5432"
+web:
+  build: .
+  volumes:
+    - .:/home
+  environment:
+    - DATABASE_URL=postgres://continua11y:password@postgres:5432/continua11y
+    - FRESHDB=TRUE
+  ports:
+    - "3000:3000"
+  links:
+    - postgres
+  command: bash -c "sleep 10 && npm start"
